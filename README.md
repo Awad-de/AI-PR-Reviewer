@@ -1,25 +1,43 @@
 # 🔍 AI PR Reviewer
 
-An AI-powered GitHub Pull Request reviewer built with React, OpenAI GPT-4o / Gemini Flash, and Supabase.
+An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS, OpenAI GPT-4o / Gemini 2.0 Flash, and Supabase — developed iteratively with a full **write → verify → fix → verify** loop using the TestSprite CLI.
 
-**Live URL:** https://ai-pr-reviewer-snowy.vercel.app
+**🔗 Live URL:** https://ai-pr-reviewer-snowy.vercel.app
+
+**📦 Repo:** https://github.com/Awad-de/AI-PR-Reviewer
+
+**🧪 TestSprite Project:** 14 iterations, 14 test runs, all passing
 
 ---
 
-## What it does
+## Features
 
-Paste any GitHub PR URL and get an instant AI code review including:
+| # | Feature | Route |
+|---|---|---|
+| 1 | **AI Code Review** — quality score 0–100, verdict, summary, 5 categories | `/` |
+| 2 | **Multi-Provider AI** — switch between OpenAI GPT-4o & Gemini 2.0 Flash | `/` |
+| 3 | **Auto-suggest Fixes** — AI writes broken vs fixed code side-by-side with syntax highlighting | `/` |
+| 4 | **Batch Review** — analyze up to 5 PRs in parallel with progress bar + summary | `/batch` |
+| 5 | **Shareable Review Pages** — every review gets a permanent URL | `/review/:id` |
+| 6 | **PR Comparison** — compare two PRs with score banner, diff table, side-by-side reports | `/compare` |
+| 7 | **Saved Comparisons** — view, share, and delete saved comparisons | `/comparisons` |
+| 8 | **Developer Profile** — GitHub avatar, score history chart (Recharts), stats, all reviews | `/developer/:username` |
+| 9 | **Review History** — full dashboard with filter by AI provider, delete button, share link | `/dashboard` |
+| 10 | **Copy-to-GitHub Comments** — one-click copy of ready-to-paste review comments | `/` |
 
-- **Auto-suggested Fixes** — for each issue found, AI provides the exact broken code and the corrected version side-by-side with syntax highlighting and a one-click "Copy Fix" button
-- **Batch Review** — analyze up to 5 PRs at once at `/batch` with parallel processing, progress bar, and a summary bar showing avg score and verdict counts
-- **Shareable Review Links** — every review gets its own URL (`/review/:id`) you can share with teammates
-- **AI Provider Choice** — switch between OpenAI GPT-4o and Gemini Flash before each review
-- **Quality Score** (0–100) with animated progress bar
-- **Merge Verdict** — APPROVE / REQUEST_CHANGES / NEEDS_DISCUSSION
-- **2–3 sentence summary** of the PR
-- **5 review categories** — Bugs, Security, Performance, Clarity, Positives
-- **Ready-to-paste GitHub comments** with one-click copy
-- **Review history** stored in Supabase with the AI provider used, filterable by provider
+---
+
+## The Loop
+
+This project was built entirely through a **TestSprite verification loop**:
+
+```
+Write code → Deploy to Vercel → testsprite test create → Analyze verdict → Fix → Re-run
+```
+
+Every feature was verified by a real TestSprite run against the live app before moving on. The full log lives in [`LOOP.md`](./LOOP.md).
+
+**14 iterations. 14 test runs. 0 skipped verifications.**
 
 ---
 
@@ -28,12 +46,13 @@ Paste any GitHub PR URL and get an instant AI code review including:
 | Layer | Technology |
 |---|---|
 | Frontend | React 18 + Vite + Tailwind CSS |
-| AI (option 1) | OpenAI GPT-4o mini |
-| AI (option 2) | Google Gemini 2.0 Flash |
-| Data | GitHub REST API v3 |
-| Database | Supabase (PostgreSQL) |
+| Charts | Recharts |
+| AI — Option 1 | OpenAI GPT-4o mini |
+| AI — Option 2 | Google Gemini 2.0 Flash |
+| GitHub Data | GitHub REST API v3 |
+| Database | Supabase (PostgreSQL + RLS) |
 | Deployment | Vercel |
-| Testing | TestSprite |
+| Testing | TestSprite CLI |
 
 ---
 
@@ -47,9 +66,9 @@ cd AI-PR-Reviewer
 npm install
 ```
 
-### 2. Configure environment variables
+### 2. Environment variables
 
-Create a `.env` file and fill in your keys:
+Create `.env` and fill in:
 
 ```bash
 VITE_OPENAI_API_KEY=your_openai_api_key_here
@@ -67,35 +86,37 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 | `VITE_SUPABASE_URL` | Supabase project → Settings → API |
 | `VITE_SUPABASE_ANON_KEY` | Supabase project → Settings → API |
 
-### 3. Create Supabase table
+### 3. Supabase setup
 
-Run this SQL in your Supabase SQL editor:
+Run in Supabase SQL Editor:
 
 ```sql
-create table reviews (
-  id uuid default gen_random_uuid() primary key,
-  created_at timestamptz default now(),
-  pr_url text,
-  pr_title text,
-  pr_author text,
-  repo_name text,
-  score integer,
-  verdict text,
-  summary text,
-  bugs text[],
-  security_issues text[],
-  performance_issues text[],
-  clarity_issues text[],
-  positives text[],
-  copy_comments text[],
-  ai_provider text default 'openai'
+-- Reviews table
+CREATE TABLE reviews (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at timestamptz DEFAULT now(),
+  pr_url text, pr_title text, pr_author text, github_username text,
+  repo_name text, score integer, verdict text, summary text,
+  bugs text[], security_issues text[], performance_issues text[],
+  clarity_issues text[], positives text[], copy_comments text[],
+  ai_provider text DEFAULT 'openai', suggestions jsonb DEFAULT '[]'
 );
-```
+ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON reviews FOR ALL USING (true) WITH CHECK (true);
 
-> **Note:** If you already have the table without `ai_provider`, run:
-> ```sql
-> ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ai_provider text DEFAULT 'openai';
-> ```
+-- Comparisons table
+CREATE TABLE comparisons (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at timestamptz DEFAULT now(),
+  old_pr_url text, new_pr_url text,
+  old_score integer, new_score integer, score_delta integer,
+  old_review jsonb, new_review jsonb,
+  old_pr_data jsonb, new_pr_data jsonb,
+  ai_provider text DEFAULT 'openai'
+);
+ALTER TABLE comparisons ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON comparisons FOR ALL USING (true) WITH CHECK (true);
+```
 
 ### 4. Run locally
 
@@ -105,60 +126,75 @@ npm run dev
 
 ---
 
-## Deploy to Vercel
-
-```bash
-vercel --prod
-```
-
-Set all 5 environment variables in your Vercel project dashboard under **Settings → Environment Variables**.
-
----
-
 ## Project Structure
 
 ```
 src/
 ├── components/
+│   ├── Navbar.jsx            # Shared navbar with active-link highlighting
 │   ├── AIProviderSelect.jsx  # OpenAI / Gemini toggle
+│   ├── DeveloperSearch.jsx   # Username search → /developer/:username
 │   ├── PRInput.jsx           # URL input + validation
-│   ├── ReviewReport.jsx      # Full review layout + provider badge
-│   ├── ReviewCard.jsx        # Per-category card (bugs, security…)
-│   ├── ScoreBar.jsx          # Animated score progress bar
+│   ├── ReviewReport.jsx      # Full review layout
+│   ├── ReviewCard.jsx        # Per-category card
+│   ├── ScoreBar.jsx          # Animated score bar
 │   ├── MergeVerdict.jsx      # Verdict badge
 │   ├── CopyComments.jsx      # Copy-to-clipboard comments
-│   └── Dashboard.jsx         # History table + AI Used column + filter
+│   ├── AutoSuggest.jsx       # AI fix suggestions with highlight.js
+│   └── Dashboard.jsx         # History table with delete + share
+├── pages/
+│   ├── ReviewPage.jsx        # /review/:id — shareable review
+│   ├── BatchReview.jsx       # /batch — multi-PR analysis
+│   ├── DeveloperPage.jsx     # /developer/:username — profile + chart
+│   ├── ComparePage.jsx       # /compare — side-by-side PR comparison
+│   ├── ComparisonsPage.jsx   # /comparisons — saved comparisons list
+│   └── ComparisonDetailPage.jsx  # /comparisons/:id — detail + share
 ├── services/
 │   ├── github.js             # GitHub REST API
 │   ├── gemini.js             # Gemini 2.0 Flash
 │   ├── openai.js             # OpenAI GPT-4o mini
-│   └── supabase.js           # Supabase read/write
+│   ├── batchReview.js        # Parallel batch analysis
+│   └── supabase.js           # All DB operations
 ├── utils/
-│   └── parseGitHubURL.js     # URL parser
+│   └── parseGitHubURL.js
 ├── App.jsx
 └── main.jsx
 ```
 
 ---
 
-## Try it with a real PR
+## Test Coverage (TestSprite)
 
-```
-https://github.com/vercel/next.js/pull/1
-```
+| # | Feature | Test ID | Result |
+|---|---|---|---|
+| 1 | PR Input Validation | `210caabd` | ✅ 7/7 |
+| 2 | Dashboard + History | `053e8c00` | ✅ 6/6 |
+| 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS |
+| 4 | Copy Comments | `f20e4ba7` | ✅ 14/14 |
+| 5 | Loading State | `5dda9fb8` | ✅ PASS |
+| 6 | Multi-Provider AI | `f158a268` | ✅ 19/19 |
+| 7 | Shareable Review Page | `5ed09e9b` | ✅ 23/23 |
+| 8 | Batch Review | `24362a21` | ✅ 15/15 |
+| 9 | Auto-suggest Fix | `a2a0a890` | ✅ 7/7 |
+| 10 | Developer Profile Page | `85b034ca` | ✅ PASS |
+| 11 | PR Comparison | `0c29ae52` | ✅ 15/15 |
+| 12 | Unified Navbar + Comparisons | `42beb976` | ✅ 20/20 |
+| 13 | Delete + Detail + Share Link | `67475cd5` | ✅ 17/17 |
+| 14 | Delete Bug Fix | `8c4acdd4` | ✅ 7/7 |
+
+Full loop log: [`LOOP.md`](./LOOP.md)
 
 ---
 
-## Test Coverage (TestSprite)
+## Try it
 
-| # | Feature | Status |
-|---|---|---|
-| 1 | PR Input Validation | ✅ PASS |
-| 2 | Dashboard + History | ✅ PASS |
-| 3 | Full AI Review Flow | ✅ PASS |
-| 4 | Copy Comments | ✅ PASS |
-| 5 | Loading State | ✅ PASS |
-| 6 | Multi-Provider AI Selection | ✅ PASS |
-| 7 | Shareable Review Page (/review/:id) | ✅ PASS |
-| 8 | Batch Review (/batch) | ✅ PASS |
-| 9 | Auto-suggest Fix | ✅ PASS |
+```
+# Single PR review
+https://github.com/OWASP/NodeGoat/pull/300
+
+# Compare two PRs
+https://github.com/vercel/next.js/pull/95370  vs  https://github.com/vercel/next.js/pull/95371
+
+# Developer profile
+/developer/torvalds
+```
