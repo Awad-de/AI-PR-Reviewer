@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter15 \u2014 StatsBar visible on home page",
+  "description": "Verify the animated stats bar appears below the navbar on the home page showing total reviews, avg score, approved and changes needed counts.",
+  "priority": "p1",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app"
+    },
+    {
+      "type": "assertion",
+      "description": "A stats bar strip is visible below the navbar containing labels such as Total Reviews, Avg Score, Approved, and Changes Needed with numeric values"
+    }
+  ]
+}

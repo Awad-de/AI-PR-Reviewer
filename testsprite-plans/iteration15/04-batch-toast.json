@@ -1,0 +1,29 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter15 \u2014 Batch review complete toast",
+  "description": "Verify a toast notification appears after batch review completes stating how many PRs were analyzed.",
+  "priority": "p1",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/batch"
+    },
+    {
+      "type": "action",
+      "description": "In the textarea, enter two PR URLs each on a separate line: https://github.com/OWASP/NodeGoat/pull/300 and https://github.com/vercel/next.js/pull/1"
+    },
+    {
+      "type": "action",
+      "description": "Click the Analyze All button"
+    },
+    {
+      "type": "action",
+      "description": "Wait up to 120 seconds for both reviews to complete"
+    },
+    {
+      "type": "assertion",
+      "description": "A toast notification appears in the bottom-right with a message indicating batch review is complete and the number of PRs analyzed (e.g. 'Batch review complete! 2 PRs analyzed')"
+    }
+  ]
+}

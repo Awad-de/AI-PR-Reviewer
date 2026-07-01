@@ -1,0 +1,37 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter15 \u2014 Toast notification appears and auto-dismisses",
+  "description": "Verify a success toast notification appears in the bottom-right after a review is saved and auto-dismisses within 5 seconds.",
+  "priority": "p1",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app"
+    },
+    {
+      "type": "action",
+      "description": "Type https://github.com/OWASP/NodeGoat/pull/300 in the PR URL input field"
+    },
+    {
+      "type": "action",
+      "description": "Click the Analyze PR button"
+    },
+    {
+      "type": "action",
+      "description": "Wait up to 90 seconds for the review to complete"
+    },
+    {
+      "type": "assertion",
+      "description": "A toast notification appears in the bottom-right corner of the page containing a success message such as 'Review saved successfully'"
+    },
+    {
+      "type": "action",
+      "description": "Wait 5 seconds"
+    },
+    {
+      "type": "assertion",
+      "description": "The toast notification has auto-dismissed and is no longer visible on the page"
+    }
+  ]
+}
