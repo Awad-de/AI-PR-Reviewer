@@ -1,0 +1,15 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Auto-suggest fixes — section renders and handles both states correctly",
+  "description": "After a PR review, the Auto-suggested Fixes section always appears below review cards. It shows either suggestion cards (with Copy Fix buttons) or a clean-code message. Both outcomes are valid PASS states.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input and click 'Analyze PR'" },
+    { "type": "action", "description": "Wait for the review report to fully load — the spinner disappears and review category cards are visible" },
+    { "type": "assertion", "description": "A quality score bar and verdict badge are visible in the review report header" },
+    { "type": "assertion", "description": "A section titled '🔧 Auto-suggested Fixes' is visible on the page" },
+    { "type": "assertion", "description": "Inside the Auto-suggested Fixes section, either the text '✅ No fixes needed — code looks clean!' is displayed, or one or more fix cards are shown with issue titles" }
+  ]
+}

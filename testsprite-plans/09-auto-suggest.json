@@ -1,0 +1,18 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Auto-suggest fixes — broken/fixed code blocks with Copy Fix button",
+  "description": "After a PR review is generated, an 'Auto-suggested Fixes' section appears below the review cards showing side-by-side broken and fixed code blocks. Each suggestion has a Copy Fix button that changes to 'Copied ✓' on click.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input and click 'Analyze PR'" },
+    { "type": "action", "description": "Wait for the review report to fully load" },
+    { "type": "assertion", "description": "A section titled '🔧 Auto-suggested Fixes' is visible below the review cards" },
+    { "type": "assertion", "description": "Either at least one suggestion card is visible (showing broken and fixed code blocks side by side with issue title in red), OR the section shows '✅ No fixes needed — code looks clean!' if no suggestions were returned" },
+    { "type": "assertion", "description": "If suggestion cards are present: a 'Copy Fix' button is visible on at least one card" },
+    { "type": "action", "description": "If a 'Copy Fix' button is visible, click it" },
+    { "type": "assertion", "description": "If clicked, the button text changes to 'Copied ✓'" },
+    { "type": "assertion", "description": "If suggestion cards are present: an explanation text is visible below the code blocks (starting with 💡)" }
+  ]
+}
