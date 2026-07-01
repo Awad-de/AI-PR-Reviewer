@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import PRInput from './components/PRInput.jsx'
 import ReviewReport from './components/ReviewReport.jsx'
 import Dashboard from './components/Dashboard.jsx'
+import AIProviderSelect from './components/AIProviderSelect.jsx'
 import { fetchPRData } from './services/github.js'
-import { reviewPR } from './services/gemini.js'
+import { reviewPR as reviewWithGemini } from './services/gemini.js'
+import { reviewPR as reviewWithOpenAI } from './services/openai.js'
 import { saveReview, getReviewHistory } from './services/supabase.js'
 
 export default function App() {
@@ -13,6 +15,7 @@ export default function App() {
   const [prData, setPrData] = useState(null)
   const [history, setHistory] = useState([])
   const [activeTab, setActiveTab] = useState('review')
+  const [provider, setProvider] = useState('openai')
 
   useEffect(() => {
     loadHistory()
@@ -29,11 +32,16 @@ export default function App() {
 
     try {
       const fetchedPR = await fetchPRData(url)
-      const reviewResult = await reviewPR(fetchedPR)
-      await saveReview(fetchedPR, reviewResult)
+
+      const reviewResult =
+        provider === 'openai'
+          ? await reviewWithOpenAI(fetchedPR)
+          : await reviewWithGemini(fetchedPR)
+
+      await saveReview(fetchedPR, reviewResult, provider)
 
       setPrData(fetchedPR)
-      setReview(reviewResult)
+      setReview({ ...reviewResult, ai_provider: provider })
       setActiveTab('review')
       await loadHistory()
     } catch (err) {
@@ -92,11 +100,14 @@ export default function App() {
       {/* Main content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         {/* PR Input — always visible */}
-        <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-base font-semibold text-gray-300 mb-4">
-            Paste a GitHub PR URL to get an AI-powered review
-          </h2>
-          <PRInput onSubmit={handleAnalyze} isLoading={isLoading} error={error} />
+        <section className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+          <AIProviderSelect selectedProvider={provider} onProviderChange={setProvider} />
+          <div>
+            <h2 className="text-base font-semibold text-gray-300 mb-3">
+              Paste a GitHub PR URL to get an AI-powered review
+            </h2>
+            <PRInput onSubmit={handleAnalyze} isLoading={isLoading} error={error} />
+          </div>
         </section>
 
         {/* Tab: Review */}

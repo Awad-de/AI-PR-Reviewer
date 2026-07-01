@@ -10,9 +10,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
  *
  * @param {Object} prData - PR metadata from fetchPRData
  * @param {Object} reviewResult - Parsed review from reviewPR
+ * @param {string} aiProvider - 'openai' or 'gemini'
  * @returns {Promise<Object>} The inserted row
  */
-export async function saveReview(prData, reviewResult) {
+export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
   const { data, error } = await supabase
     .from('reviews')
     .insert({
@@ -29,6 +30,7 @@ export async function saveReview(prData, reviewResult) {
       clarity_issues: reviewResult.clarity_issues,
       positives: reviewResult.positives,
       copy_comments: reviewResult.copy_comments,
+      ai_provider: aiProvider,
     })
     .select()
     .single()
@@ -48,7 +50,7 @@ export async function saveReview(prData, reviewResult) {
 export async function getReviewHistory() {
   const { data, error } = await supabase
     .from('reviews')
-    .select('*')
+    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider')
     .order('created_at', { ascending: false })
     .limit(20)
 

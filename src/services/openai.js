@@ -1,9 +1,5 @@
-const GEMINI_MODEL = 'gemini-2.0-flash'
-
-function buildEndpoint() {
-  const key = import.meta.env.VITE_GEMINI_API_KEY
-  return `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`
-}
+const OPENAI_MODEL = 'gpt-4o-mini'
+const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions'
 
 function buildPrompt(prData) {
   return `You are an expert code reviewer. Analyze this GitHub Pull Request and return ONLY a valid JSON object with no extra text, no markdown, no code fences.
@@ -45,14 +41,21 @@ async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function callGemini(prompt) {
+async function callOpenAI(prompt) {
+  const key = import.meta.env.VITE_OPENAI_API_KEY
+
   const doRequest = () =>
-    fetch(buildEndpoint(), {
+    fetch(OPENAI_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${key}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 2048 },
+        model: OPENAI_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.2,
+        max_tokens: 2048,
       }),
     })
 
@@ -66,37 +69,41 @@ async function callGemini(prompt) {
       throw new Error('Network error. Check your connection.')
     })
     if (response.status === 429) {
-      throw new Error('Gemini rate limit exceeded. Please wait a moment and try again.')
+      throw new Error('OpenAI rate limit exceeded. Please wait a moment and try again.')
     }
+  }
+
+  if (response.status === 401) {
+    throw new Error('Invalid OpenAI API key. Check VITE_OPENAI_API_KEY.')
   }
 
   if (!response.ok) {
     const body = await response.text()
-    throw new Error(`Gemini API error ${response.status}: ${body}`)
+    throw new Error(`OpenAI API error ${response.status}: ${body}`)
   }
 
   const data = await response.json()
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text
+  const raw = data?.choices?.[0]?.message?.content
 
   if (!raw) {
-    throw new Error('Gemini returned an empty response.')
+    throw new Error('OpenAI returned an empty response.')
   }
 
   return cleanResponseText(raw)
 }
 
 /**
- * Sends PR data to Gemini and returns a structured review object.
+ * Sends PR data to OpenAI GPT-4o-mini and returns a structured review object.
  *
  * @param {Object} prData - PR metadata from fetchPRData
  * @returns {Promise<Object>} Parsed review JSON
  */
 export async function reviewPR(prData) {
-  const text = await callGemini(buildPrompt(prData))
+  const text = await callOpenAI(buildPrompt(prData))
 
   try {
     return JSON.parse(text)
   } catch {
-    throw new Error('AI_PARSE_ERROR: Could not parse Gemini response')
+    throw new Error('AI_PARSE_ERROR: Could not parse OpenAI response')
   }
 }
