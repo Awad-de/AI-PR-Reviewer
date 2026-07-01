@@ -29,8 +29,12 @@ async function githubFetch(url) {
     throw new Error('PR not found. Check the URL.')
   }
 
+  if (response.status === 401) {
+    throw new Error('GitHub token is invalid or expired. Update VITE_GITHUB_TOKEN in your environment.')
+  }
+
   if (response.status === 403) {
-    throw new Error('GitHub rate limit exceeded. Add a GitHub token.')
+    throw new Error('GitHub rate limit exceeded. Add a valid GitHub token.')
   }
 
   if (!response.ok) {
