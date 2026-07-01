@@ -244,3 +244,49 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_verdict_check;
 | 7 | Shareable Review Page | `5ed09e9b` | ✅ PASS (23/23 steps) |
 
 **All 7 features verified. App is production-ready. 🚀**
+
+---
+
+## Iteration 8 — Batch Review (/batch)
+
+**Code changes pushed:** `165cd2c`
+- `src/services/batchReview.js` — `analyzeBatch(urls, provider, onProgress)` using `Promise.allSettled`, per-PR progress callback
+- `src/pages/BatchReview.jsx` — textarea for up to 5 URLs, per-line validation with ✓/✗ indicators, "X/5 PRs" counter badge, progress bar, per-PR status icons (⏳→🔄→✅/❌), stacked ReviewReport cards after completion, summary bar (avg score + verdict counts)
+- `src/App.jsx` — added `/batch` Route, "Batch Review" nav button in all navbars
+
+**TestSprite test created:** `24362a21-5bbe-4a06-9a2c-8084339db987`
+
+**Test plan steps:**
+1. Navigate to /batch
+2. Assert textarea + Analyze All button visible
+3. Paste 3 valid PR URLs
+4. Assert counter shows "3/5 PRs"
+5. Assert all 3 URLs show ✓ valid
+6. Click Analyze All
+7. Assert progress bar visible + button shows "Analyzing"
+8. Assert per-PR status indicators visible
+9. Wait for all to complete
+10. Assert summary bar visible (count, avg score, verdicts)
+11. Assert at least 1 review card visible
+12. Navigate to /dashboard → assert rows present
+
+**Errors Found:** None
+
+**Result:** ✅ PASS — 15/15 steps (first run, no fixes needed)
+
+---
+
+## Final Summary
+
+| # | Feature | Test ID | Status |
+|---|---|---|---|
+| 1 | PR Input Validation | `210caabd` | ✅ PASS (7/7 steps) |
+| 2 | Dashboard + History | `053e8c00` | ✅ PASS (6/6 steps) |
+| 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS |
+| 4 | Copy Comments | `f20e4ba7` | ✅ PASS (14/14 steps) |
+| 5 | Loading State | `5dda9fb8` | ✅ PASS |
+| 6 | Multi-Provider AI | `f158a268` | ✅ PASS (19/19 steps) |
+| 7 | Shareable Review Page | `5ed09e9b` | ✅ PASS (23/23 steps) |
+| 8 | Batch Review | `24362a21` | ✅ PASS (15/15 steps) |
+
+**All 8 features verified. App is production-ready. 🚀**

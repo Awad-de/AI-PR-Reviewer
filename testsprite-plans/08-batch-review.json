@@ -1,0 +1,22 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Batch review — analyze multiple PRs, summary bar, dashboard rows",
+  "description": "User navigates to /batch, pastes 3 PR URLs, sees the URL counter update to 3/5, clicks Analyze All, watches the progress bar and per-PR status indicators, waits for completion, sees 3 stacked review cards and a summary bar, then navigates to /dashboard and confirms 3 new rows were added.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /batch" },
+    { "type": "assertion", "description": "The page shows a textarea labeled with placeholder text about pasting one PR URL per line, and an 'Analyze All' button" },
+    { "type": "action", "description": "Paste the following 3 URLs into the textarea, one per line: https://github.com/vercel/next.js/pull/1, https://github.com/vercel/next.js/pull/2, https://github.com/vercel/next.js/pull/3" },
+    { "type": "assertion", "description": "The URL counter badge shows '3/5 PRs'" },
+    { "type": "assertion", "description": "All 3 URLs are shown with a green checkmark (✓) indicating they are valid" },
+    { "type": "action", "description": "Click the 'Analyze All' button" },
+    { "type": "assertion", "description": "A progress bar is visible and the button text changes to include 'Analyzing'" },
+    { "type": "assertion", "description": "Each of the 3 PR URLs shows a status indicator (⏳, 🔄, ✅, or ❌)" },
+    { "type": "action", "description": "Wait for all 3 PRs to finish analyzing (all status indicators should be ✅ or ❌)" },
+    { "type": "assertion", "description": "A summary bar is visible showing the number of PRs analyzed, an average score, and verdict counts" },
+    { "type": "assertion", "description": "At least 1 review report card is visible on the page showing score, verdict, and summary content" },
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "assertion", "description": "The dashboard table shows recent entries — at least the PRs from the batch analysis appear as rows" }
+  ]
+}

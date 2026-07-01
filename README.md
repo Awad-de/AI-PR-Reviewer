@@ -10,6 +10,7 @@ An AI-powered GitHub Pull Request reviewer built with React, OpenAI GPT-4o / Gem
 
 Paste any GitHub PR URL and get an instant AI code review including:
 
+- **Batch Review** — analyze up to 5 PRs at once at `/batch` with parallel processing, progress bar, and a summary bar showing avg score and verdict counts
 - **Shareable Review Links** — every review gets its own URL (`/review/:id`) you can share with teammates
 - **AI Provider Choice** — switch between OpenAI GPT-4o and Gemini Flash before each review
 - **Quality Score** (0–100) with animated progress bar
@@ -158,3 +159,4 @@ https://github.com/vercel/next.js/pull/1
 | 5 | Loading State | ✅ PASS |
 | 6 | Multi-Provider AI Selection | ✅ PASS |
 | 7 | Shareable Review Page (/review/:id) | ✅ PASS |
+| 8 | Batch Review (/batch) | ✅ PASS |
