@@ -3,20 +3,40 @@ name: TestSprite CI
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   testsprite:
+    name: Run TestSprite verification
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Install TestSprite CLI
         run: npm i -g @testsprite/testsprite-cli
 
-      - name: Run TestSprite Tests
+      - name: Run core feature tests
         env:
           TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
         run: |
+          # PR Input Validation
           testsprite test run 210caabd-a2ed-4ffe-9ae3-70b56b1e1f25 \
             --target-url https://ai-pr-reviewer-snowy.vercel.app \
-            --wait --output json || true
+            --wait --timeout 180
+
+          # Dashboard / History
+          testsprite test run 053e8c00-d790-48a6-8b33-93ca99a67cb5 \
+            --target-url https://ai-pr-reviewer-snowy.vercel.app \
+            --wait --timeout 180
+
+          # Unified Navbar + Comparisons page
+          testsprite test run 42beb976-ae4d-44a8-8813-f14bceef61bf \
+            --target-url https://ai-pr-reviewer-snowy.vercel.app \
+            --wait --timeout 180
+
+          # Delete button — row stays removed
+          testsprite test run 8c4acdd4-a270-4a86-8078-d37c5a63e4f5 \
+            --target-url https://ai-pr-reviewer-snowy.vercel.app \
+            --wait --timeout 180
