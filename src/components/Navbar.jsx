@@ -5,7 +5,8 @@ import { useNavCounts } from '../contexts/NavCounts.jsx'
 const MAX_BADGE = 20
 
 function Badge({ count }) {
-  if (!count) return null
+  // hide badge for links that have no badge prop (undefined/null), but always show for count >= 0
+  if (count == null) return null
   const label = count > MAX_BADGE ? `${MAX_BADGE}+` : count
   return (
     <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-indigo-500 text-white leading-none">

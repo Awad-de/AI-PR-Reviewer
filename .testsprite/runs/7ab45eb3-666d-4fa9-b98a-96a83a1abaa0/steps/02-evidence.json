@@ -1,0 +1,8 @@
+[
+  {
+    "kind": "snapshot",
+    "stepIndex": 2,
+    "summary": "Step 2 'Click the 'History' nav link in the top navbar to open the History page' passed.",
+    "path": "steps/02-snapshot.html"
+  }
+]

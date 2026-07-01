@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter16 — Nav badge counts on History and Comparisons",
+  "description": "Verify that the History and Comparisons nav links show badge counts, and that deleting an item updates the badge immediately.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action",    "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app" },
+    { "type": "assertion", "description": "The navbar shows a small numeric badge next to the 'History' link (e.g. a number like 31 or any positive integer)" },
+    { "type": "assertion", "description": "The navbar shows a small numeric badge next to the 'Comparisons' link (any non-negative integer, or 0 if empty)" },
+    { "type": "action",    "description": "Click the 'History' nav link to go to /dashboard" },
+    { "type": "assertion", "description": "The History page loads with a table of reviews" },
+    { "type": "action",    "description": "Note the current badge number shown next to 'History' in the navbar" },
+    { "type": "action",    "description": "Click the 🗑️ delete button on any review row and confirm the deletion" },
+    { "type": "assertion", "description": "The deleted row disappears from the table AND the badge number next to 'History' in the navbar decreased by 1 immediately without a page reload" }
+  ]
+}

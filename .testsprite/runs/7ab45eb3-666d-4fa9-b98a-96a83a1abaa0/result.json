@@ -1,0 +1,18 @@
+{
+  "testId": "b4cd720d-0608-4bad-9bc7-b31bbaffd636",
+  "status": "failed",
+  "startedAt": "2026-07-01T21:43:28.563Z",
+  "finishedAt": "2026-07-01T21:45:40.519Z",
+  "videoUrl": "https://testsprite-videos.s3.us-east-1.amazonaws.com/54e89488-a0b1-7055-edff-9058ffcfb401/1782942337299261//tmp/bba97f36-6997-4594-8889-df23beb8602a/result.webm",
+  "failureAnalysisUrl": null,
+  "snapshotId": "snap_b0770e49facf4276",
+  "runIdIfAvailable": "7ab45eb3-666d-4fa9-b98a-96a83a1abaa0",
+  "codeVersion": "v1",
+  "targetUrl": "https://ai-pr-reviewer-snowy.vercel.app",
+  "targetUrlSource": "run",
+  "failedStepIndex": 3,
+  "failureKind": "unknown",
+  "verdict": "failed",
+  "executionStatus": "completed",
+  "summary": "Failed: TEST FAILURE\n\nThe Comparisons nav link does not display a numeric badge — the feature is missing, so the full verification cannot be completed.\n\nObservations:\n- The top navbar shows 'History' with a numeric badge '17' and the page header shows '17 reviews'.\n- The 'Comparisons' nav link (top navbar and side tab) does not display any numeric badge.\n- Because the Comparisons badge is absent, the requirement that both nav links show numeric badge counts cannot be satisfied; therefore the te…"
+}

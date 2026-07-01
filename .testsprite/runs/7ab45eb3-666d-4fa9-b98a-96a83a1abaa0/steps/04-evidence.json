@@ -1,0 +1,8 @@
+[
+  {
+    "kind": "snapshot",
+    "stepIndex": 4,
+    "summary": "Step 4 'Expected the 'Comparisons' nav link to display a numeric badge (e.g. '0').' failed. Error: TEST FAILURE\n\nThe Comparisons nav link does not display a numeric badge — the feature is missing, so the full verification cannot be completed.\n\nObservations:\n- The top navbar shows 'History' with a numeric badge '17' and the page header shows '17 reviews'.\n- The 'Comparisons' nav link (top navbar and side tab) does not display any numeric badge.\n- Because the Comparisons badge is absent, the requirement that both nav links show numeric badge counts cannot be satisfied; therefore the test cannot be fully completed (deletion/badge-decrement verification not performed).",
+    "path": "steps/04-snapshot.html"
+  }
+]
