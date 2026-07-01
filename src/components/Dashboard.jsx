@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { deleteReview } from '../services/supabase.js'
 
 function formatDate(dateStr) {
   if (!dateStr) return '—'
@@ -45,16 +46,34 @@ const FILTERS = [
   { id: 'gemini', label: '✨ Gemini' },
 ]
 
-/**
- * @param {{ reviews: Array, onSelectReview: (review: Object) => void }} props
- */
-export default function Dashboard({ reviews, onSelectReview }) {
+export default function Dashboard({ reviews: initialReviews, onSelectReview }) {
+  const [reviews, setReviews] = useState(initialReviews)
   const [filter, setFilter] = useState('all')
+  const [deleting, setDeleting] = useState(null)
   const navigate = useNavigate()
+
+  // keep in sync if parent re-renders with new reviews
+  if (initialReviews !== reviews && initialReviews.length !== reviews.length) {
+    setReviews(initialReviews)
+  }
 
   const filtered = filter === 'all'
     ? reviews
     : reviews.filter((r) => r.ai_provider === filter)
+
+  async function handleDelete(e, id) {
+    e.stopPropagation()
+    if (!window.confirm('Delete this review?')) return
+    setDeleting(id)
+    try {
+      await deleteReview(id)
+      setReviews((prev) => prev.filter((r) => r.id !== id))
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setDeleting(null)
+    }
+  }
 
   if (!reviews || reviews.length === 0) {
     return (
@@ -102,7 +121,7 @@ export default function Dashboard({ reviews, onSelectReview }) {
                 <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">Verdict</th>
                 <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">AI Used</th>
                 <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">Date</th>
-                <th className="pb-3" />
+                <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium text-center pr-2">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800/60">
@@ -126,11 +145,9 @@ export default function Dashboard({ reviews, onSelectReview }) {
                       </span>
                     </td>
                     <td className="py-3 pr-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${
-                          VERDICT_STYLES[review.verdict] || VERDICT_STYLES.NEEDS_DISCUSSION
-                        }`}
-                      >
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${
+                        VERDICT_STYLES[review.verdict] || VERDICT_STYLES.NEEDS_DISCUSSION
+                      }`}>
                         {VERDICT_ICONS[review.verdict] || '💬'} {review.verdict}
                       </span>
                     </td>
@@ -146,8 +163,24 @@ export default function Dashboard({ reviews, onSelectReview }) {
                     <td className="py-3 pr-4 text-gray-400 whitespace-nowrap">
                       {formatDate(review.created_at)}
                     </td>
-                    <td className="py-3 text-gray-600 text-base">
-                      🔗
+                    <td className="py-3 pr-2 text-center" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => navigate(`/review/${review.id}`)}
+                          className="px-2 py-1 rounded text-xs bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/40 transition"
+                          title="View"
+                        >
+                          🔗
+                        </button>
+                        <button
+                          onClick={(e) => handleDelete(e, review.id)}
+                          disabled={deleting === review.id}
+                          className="px-2 py-1 rounded text-xs bg-red-900/20 text-red-400 hover:bg-red-900/40 disabled:opacity-40 transition"
+                          title="Delete"
+                        >
+                          {deleting === review.id ? '…' : '🗑️'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )

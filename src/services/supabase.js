@@ -180,6 +180,11 @@ export async function getComparisons() {
   return data || []
 }
 
+export async function deleteReview(id) {
+  const { error } = await supabase.from('reviews').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete: ${error.message}`)
+}
+
 export async function getComparisonById(id) {
   const { data, error } = await supabase
     .from('comparisons')
