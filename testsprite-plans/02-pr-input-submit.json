@@ -1,0 +1,14 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "PR Input accepts a valid GitHub PR URL and shows loading state",
+  "description": "When a user pastes a valid GitHub PR URL and clicks Analyze PR, the button shows a spinner and 'Analyzing...' text while the request is in flight.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input field" },
+    { "type": "action", "description": "Click the Analyze PR button" },
+    { "type": "assertion", "description": "The Analyze PR button changes to show a spinner icon and the text 'Analyzing...' while the analysis is running" },
+    { "type": "assertion", "description": "The input field is disabled while loading is in progress" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Full review flow fetches GitHub PR and displays AI review report",
+  "description": "When a user submits a real GitHub PR URL, the app fetches the PR data, calls the AI, and renders a complete review report including score bar, merge verdict badge, summary text, and review category cards.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input" },
+    { "type": "action", "description": "Click the Analyze PR button and wait for analysis to complete" },
+    { "type": "assertion", "description": "A review report card appears showing the PR title and a score out of 100" },
+    { "type": "assertion", "description": "A colored progress bar is visible representing the quality score, positioned below the score label" },
+    { "type": "assertion", "description": "A merge verdict badge is displayed showing one of: Approve Merge, Request Changes, or Needs Discussion" },
+    { "type": "assertion", "description": "A 2-3 sentence summary paragraph is shown describing the PR" },
+    { "type": "assertion", "description": "Review category cards for Bugs, Security Issues, Performance, Clarity, and Positives are all visible on the page" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "PR Input validates and rejects malformed GitHub URLs",
+  "description": "When a user submits a URL that is not a valid GitHub PR URL, the app shows a red validation error below the input and does not start analysis.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Type 'not-a-url' into the PR URL input field" },
+    { "type": "action", "description": "Click the Analyze PR button" },
+    { "type": "assertion", "description": "A red error message appears below the input field indicating the URL is invalid; the spinner is not shown and no review result appears" },
+    { "type": "action", "description": "Clear the input and type 'https://google.com/not-a-pr'" },
+    { "type": "action", "description": "Click the Analyze PR button" },
+    { "type": "assertion", "description": "A red error message is shown indicating the URL must contain /pull/ and no loading spinner appears" }
+  ]
+}
