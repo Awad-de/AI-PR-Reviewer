@@ -39,7 +39,7 @@ export default function Navbar() {
           onClick={() => navigate('/')}
           className="flex items-center gap-2 shrink-0 mr-2"
         >
-          <img src="/logo.png" alt="AI PR Reviewer" className="h-8 w-8 rounded-xl object-cover" />
+          <img src="/logo.png" alt="AI PR Reviewer" className="h-8 w-8 rounded-xl object-cover bg-white p-0.5" />
           <span className="font-bold text-white text-base tracking-tight hidden sm:block">
             AI PR Reviewer
           </span>

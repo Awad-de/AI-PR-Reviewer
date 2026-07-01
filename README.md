@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.png" width="96" height="96" style="border-radius:20px" alt="AI PR Reviewer Logo" />
+  <img src="public/logo.png" width="100" height="100" style="border-radius:22px;box-shadow:0 4px 24px rgba(0,0,0,0.15)" alt="AI PR Reviewer Logo" />
   <h1>AI PR Reviewer</h1>
 </div>
 
