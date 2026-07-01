@@ -1,0 +1,24 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Shareable review page — /review/:id navigation and Copy Share Link",
+  "description": "After analyzing a PR the user can navigate to /dashboard, click a row, land on /review/:id with the full report, copy the share link, and return to /dashboard via the back button.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page at /" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input and click Analyze PR" },
+    { "type": "action", "description": "Wait for the review report to fully load and appear on screen" },
+    { "type": "assertion", "description": "A review report is visible on the page" },
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "assertion", "description": "The dashboard table is visible with at least one review row containing a 🔗 icon" },
+    { "type": "action", "description": "Click on the first review row in the table" },
+    { "type": "assertion", "description": "The URL changes to /review/ followed by a UUID" },
+    { "type": "assertion", "description": "The full review report is visible on the page, including a score, verdict badge, and summary section" },
+    { "type": "assertion", "description": "A '🔗 Copy Share Link' button is visible in the top-right of the header" },
+    { "type": "action", "description": "Click the '🔗 Copy Share Link' button" },
+    { "type": "assertion", "description": "The button text changes to '✓ Copied!'" },
+    { "type": "assertion", "description": "A '← Back to Dashboard' button is visible in the top-left of the header" },
+    { "type": "action", "description": "Click the '← Back to Dashboard' button" },
+    { "type": "assertion", "description": "The URL changes back to /dashboard and the dashboard table is visible again" }
+  ]
+}
