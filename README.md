@@ -1,4 +1,7 @@
-# 🔍 AI PR Reviewer
+<div align="center">
+  <img src="public/logo.png" width="96" height="96" style="border-radius:20px" alt="AI PR Reviewer" />
+  <h1>AI PR Reviewer</h1>
+</div>
 
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://ai-pr-reviewer-snowy.vercel.app)
 [![CI](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml/badge.svg)](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml)
