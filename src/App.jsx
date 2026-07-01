@@ -4,8 +4,10 @@ import PRInput from './components/PRInput.jsx'
 import ReviewReport from './components/ReviewReport.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AIProviderSelect from './components/AIProviderSelect.jsx'
+import DeveloperSearch from './components/DeveloperSearch.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
 import BatchReview from './pages/BatchReview.jsx'
+import DeveloperPage from './pages/DeveloperPage.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
@@ -91,7 +93,7 @@ function HomePage() {
             <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
           </div>
 
-          <nav className="flex gap-1">
+          <nav className="flex items-center gap-1">
             <button
               onClick={() => setActiveTab('review')}
               className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
@@ -123,6 +125,9 @@ function HomePage() {
             >
               Batch Review
             </button>
+            <div className="ml-2 pl-2 border-l border-gray-700">
+              <DeveloperSearch />
+            </div>
           </nav>
         </div>
       </header>
@@ -205,6 +210,7 @@ export default function App() {
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/review/:id" element={<ReviewPage />} />
       <Route path="/batch" element={<BatchReview />} />
+      <Route path="/developer/:username" element={<DeveloperPage />} />
     </Routes>
   )
 }
@@ -224,7 +230,7 @@ function DashboardPage() {
             <span className="text-xl">🔍</span>
             <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
           </div>
-          <nav className="flex gap-1">
+          <nav className="flex items-center gap-1">
             <a
               href="/"
               className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
@@ -245,6 +251,9 @@ function DashboardPage() {
             >
               Batch Review
             </a>
+            <div className="ml-2 pl-2 border-l border-gray-700">
+              <DeveloperSearch />
+            </div>
           </nav>
         </div>
       </header>

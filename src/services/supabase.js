@@ -28,6 +28,7 @@ export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
       pr_url: prData.pr_url,
       pr_title: prData.pr_title,
       pr_author: prData.pr_author,
+      github_username: prData.github_username || prData.pr_author || 'unknown',
       repo_name: prData.repo_name,
       score: reviewResult.score,
       verdict: normalizeVerdict(reviewResult.verdict),
@@ -57,10 +58,12 @@ export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
  * @param {string} id - UUID of the review
  * @returns {Promise<Object|null>} The review row, or null if not found
  */
+const REVIEW_FIELDS = 'id, created_at, pr_url, pr_title, pr_author, github_username, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider, suggestions'
+
 export async function getReviewById(id) {
   const { data, error } = await supabase
     .from('reviews')
-    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider, suggestions')
+    .select(REVIEW_FIELDS)
     .eq('id', id)
     .single()
 
@@ -76,7 +79,7 @@ export async function getReviewById(id) {
 export async function getReviewHistory() {
   const { data, error } = await supabase
     .from('reviews')
-    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider, suggestions')
+    .select(REVIEW_FIELDS)
     .order('created_at', { ascending: false })
     .limit(20)
 
@@ -86,4 +89,45 @@ export async function getReviewHistory() {
   }
 
   return data || []
+}
+
+/**
+ * Fetches all reviews for a specific GitHub username.
+ *
+ * @param {string} username - GitHub username
+ * @returns {Promise<Array>} Array of review rows
+ */
+export async function getReviewsByUsername(username) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(REVIEW_FIELDS)
+    .eq('github_username', username)
+    .order('created_at', { ascending: true })
+
+  if (error) {
+    console.error('Failed to load reviews for username:', error.message)
+    return []
+  }
+
+  return data || []
+}
+
+/**
+ * Calculates aggregate stats for a developer from their review history.
+ *
+ * @param {Array} reviews - Array of review rows from getReviewsByUsername
+ * @returns {Object} { total, avgScore, approveRate, mostRecentDate }
+ */
+export function getDeveloperStats(reviews) {
+  if (!reviews.length) {
+    return { total: 0, avgScore: 0, approveRate: 0, mostRecentDate: null }
+  }
+
+  const total = reviews.length
+  const avgScore = Math.round(reviews.reduce((s, r) => s + (r.score || 0), 0) / total)
+  const approveCount = reviews.filter((r) => r.verdict === 'APPROVE').length
+  const approveRate = Math.round((approveCount / total) * 100)
+  const mostRecentDate = reviews.at(-1)?.created_at ?? null
+
+  return { total, avgScore, approveRate, mostRecentDate }
 }

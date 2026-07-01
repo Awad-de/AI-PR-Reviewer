@@ -86,6 +86,7 @@ export async function fetchPRData(prURL) {
     pr_url: prURL,
     pr_title: pr.title,
     pr_author: pr.user?.login || 'unknown',
+    github_username: pr.user?.login || 'unknown',
     repo_name: pr.base?.repo?.full_name || `${owner}/${repo}`,
     pr_body: pr.body || '',
     files_changed: files.length,
