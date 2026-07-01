@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter14 — Verify delete button works in History table",
+  "description": "Verify that clicking the delete (🗑️) button on a review row in the History page removes the row from the table without it reappearing.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/dashboard" },
+    { "type": "assertion", "description": "The History page loads and the reviews table is visible with at least one row" },
+    { "type": "assertion", "description": "Each row has a 🗑️ delete button in the Actions column" },
+    { "type": "action", "description": "Count the number of rows visible in the reviews table and remember it" },
+    { "type": "action", "description": "Click the 🗑️ delete button on the last row in the table — a confirmation dialog should appear" },
+    { "type": "action", "description": "Accept/confirm the deletion dialog by clicking OK" },
+    { "type": "assertion", "description": "The deleted row disappears from the table and does NOT reappear — the row count is now one less than before" },
+    { "type": "assertion", "description": "The remaining rows in the table are still visible and intact" }
+  ]
+}

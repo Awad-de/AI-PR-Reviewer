@@ -422,5 +422,6 @@ CREATE TABLE IF NOT EXISTS comparisons (
 | 11 | PR Comparison | `0c29ae52` | ✅ PASS (15/15 steps) |
 | 12 | Unified Navbar + Comparisons Page | `42beb976` | ✅ PASS (20/20 steps) |
 | 13 | Delete buttons + Comparison detail + Share link | `67475cd5` | ✅ PASS (17/17 steps) |
+| 14 | Delete fix — row stays removed after confirm | `8c4acdd4` | ✅ PASS (7/7 steps) |
 
-**All 13 features verified. App is production-ready. 🚀**
+**All 14 features verified. App is production-ready. 🚀**
