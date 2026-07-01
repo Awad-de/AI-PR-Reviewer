@@ -38,18 +38,37 @@ function CodeBlock({ code, label, colorClass }) {
   )
 }
 
+function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).catch(() => copyFallback(text))
+    } else {
+      copyFallback(text)
+    }
+  } catch {
+    copyFallback(text)
+  }
+}
+
+function copyFallback(text) {
+  try {
+    const el = document.createElement('textarea')
+    el.value = text
+    el.style.position = 'fixed'
+    el.style.opacity = '0'
+    document.body.appendChild(el)
+    el.focus()
+    el.select()
+    document.execCommand('copy')
+    document.body.removeChild(el)
+  } catch {}
+}
+
 function SuggestionCard({ suggestion, index }) {
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
-    navigator.clipboard.writeText(suggestion.fixed_code).catch(() => {
-      const el = document.createElement('textarea')
-      el.value = suggestion.fixed_code
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand('copy')
-      document.body.removeChild(el)
-    })
+    copyToClipboard(suggestion.fixed_code)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -102,8 +121,7 @@ function SuggestionCard({ suggestion, index }) {
  * @param {{ suggestions: Array }} props
  */
 export default function AutoSuggest({ suggestions }) {
-  const raw = suggestions
-  const list = Array.isArray(raw) ? raw : []
+  const list = Array.isArray(suggestions) ? suggestions : []
 
   return (
     <div className="space-y-4">
@@ -115,10 +133,6 @@ export default function AutoSuggest({ suggestions }) {
             {list.length} fix{list.length !== 1 ? 'es' : ''}
           </span>
         )}
-        {/* debug: remove after confirming */}
-        <span className="text-xs text-gray-700 font-mono ml-2">
-          ({raw === undefined ? 'undefined' : raw === null ? 'null' : `array[${list.length}]`})
-        </span>
       </h3>
 
       {list.length === 0 ? (

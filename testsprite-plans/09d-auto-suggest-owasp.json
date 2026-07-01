@@ -1,0 +1,20 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Auto-suggest fixes verified with a real security PR containing eval() and XSS issues",
+  "description": "Use OWASP NodeGoat PR #300 which contains eval(req.body.preTax) and XSS vulnerabilities. The AI should detect these issues and return actual fix suggestions with broken and fixed code blocks.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Paste 'https://github.com/OWASP/NodeGoat/pull/300' into the PR URL input and click 'Analyze PR'" },
+    { "type": "action", "description": "Wait for the review report to fully load — the spinner should disappear and review cards appear" },
+    { "type": "assertion", "description": "A review report is visible with a quality score and verdict badge — the score should be below 85 given the security issues in this PR" },
+    { "type": "assertion", "description": "The Security Issues card shows at least one issue mentioning eval, injection, or XSS" },
+    { "type": "assertion", "description": "A section titled '🔧 Auto-suggested Fixes' is visible below the review cards" },
+    { "type": "assertion", "description": "At least one fix suggestion card is visible inside the section — showing a red issue title, two code panels labeled '❌ Current Code' and '✅ Fixed Code'" },
+    { "type": "assertion", "description": "A 'Copy Fix' button is visible on at least one suggestion card" },
+    { "type": "action", "description": "Click the 'Copy Fix' button on the first suggestion card" },
+    { "type": "assertion", "description": "The button text changes to 'Copied ✓' within 2 seconds" },
+    { "type": "assertion", "description": "An explanation text starting with '💡' is visible below at least one suggestion's code blocks" }
+  ]
+}
