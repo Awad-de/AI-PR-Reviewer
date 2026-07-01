@@ -78,11 +78,14 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 
 **Run:** `testsprite test run 070d3dfa... --target-url https://ai-pr-reviewer-snowy.vercel.app --wait`
 
-**Errors Found:** Pending (test running)
+**Errors Found:**
+- `Gemini API error 404: models/gemini-1.5-flash is not found for API version v1beta`
+- The model name `gemini-1.5-flash` is deprecated/unavailable in the current API version
 
-**Fixes Applied:** Pending
+**Fixes Applied:**
+- Updated `src/services/gemini.js`: changed `GEMINI_MODEL` from `gemini-1.5-flash` → `gemini-2.0-flash`
 
-**Result:** Pending — see iteration update below
+**Result:** `testsprite test rerun 070d3dfa...` → **PASS ✅** (after rerun with updated model)
 
 ---
 
@@ -133,6 +136,6 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 |---|---|---|---|
 | 1 | PR Input Validation | `210caabd` | ✅ PASS (7/7) |
 | 2 | Dashboard + History | `053e8c00` | ✅ PASS (6/6) |
-| 3 | Full AI Review Flow | `070d3dfa` | ⏳ Running |
+| 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS (after fix: gemini-2.0-flash) |
 | 4 | Copy Comments | `f20e4ba7` | ⏳ Queued |
 | 5 | Loading State | `5dda9fb8` | ⏳ Queued |
