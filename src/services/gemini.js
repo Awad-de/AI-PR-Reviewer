@@ -50,32 +50,55 @@ function cleanResponseText(text) {
     .trim()
 }
 
-async function callGemini(prompt) {
-  const response = await fetch(buildEndpoint(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.2,
-        maxOutputTokens: 2048,
-      },
-    }),
-  })
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
-  if (!response.ok) {
-    const body = await response.text()
-    throw new Error(`Gemini API error ${response.status}: ${body}`)
+async function callGemini(prompt, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const response = await fetch(buildEndpoint(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 2048,
+        },
+      }),
+    })
+
+    if (response.status === 429) {
+      if (attempt < retries) {
+        // Respect retryDelay from Gemini if present, else exponential backoff
+        let waitMs = Math.pow(2, attempt) * 10000
+        try {
+          const body = await response.json()
+          const retrySeconds = body?.error?.details?.find(
+            (d) => d['@type']?.includes('RetryInfo')
+          )?.retryDelay?.replace('s', '')
+          if (retrySeconds) waitMs = parseInt(retrySeconds, 10) * 1000 + 1000
+        } catch { /* ignore parse errors */ }
+        await sleep(waitMs)
+        continue
+      }
+      throw new Error('Gemini rate limit exceeded. Please wait a moment and try again.')
+    }
+
+    if (!response.ok) {
+      const body = await response.text()
+      throw new Error(`Gemini API error ${response.status}: ${body}`)
+    }
+
+    const data = await response.json()
+    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text
+
+    if (!raw) {
+      throw new Error('Gemini returned an empty response.')
+    }
+
+    return cleanResponseText(raw)
   }
-
-  const data = await response.json()
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text
-
-  if (!raw) {
-    throw new Error('Gemini returned an empty response.')
-  }
-
-  return cleanResponseText(raw)
 }
 
 /**
