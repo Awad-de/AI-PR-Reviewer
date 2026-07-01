@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import { getComparisons, deleteComparison } from '../services/supabase.js'
+import { useNavCounts } from '../contexts/NavCounts.jsx'
 
 function deltaColor(delta) {
   if (delta > 0) return 'text-green-400'
@@ -29,6 +30,7 @@ export default function ComparisonsPage() {
   const [comparisons, setComparisons] = useState([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(null)
+  const { refresh: refreshNavCounts } = useNavCounts()
 
   useEffect(() => {
     getComparisons().then((data) => {
@@ -43,6 +45,7 @@ export default function ComparisonsPage() {
     try {
       await deleteComparison(id)
       setComparisons((prev) => prev.filter((c) => c.id !== id))
+      refreshNavCounts()
     } catch (err) {
       alert(err.message)
     } finally {

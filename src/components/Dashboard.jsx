@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { deleteReview } from '../services/supabase.js'
+import { useNavCounts } from '../contexts/NavCounts.jsx'
 
 function formatDate(dateStr) {
   if (!dateStr) return '—'
@@ -52,6 +53,7 @@ export default function Dashboard({ reviews: initialReviews, onSelectReview }) {
   const [deleting, setDeleting] = useState(null)
   const navigate = useNavigate()
   const prevLengthRef = useRef(initialReviews.length)
+  const { refresh: refreshNavCounts } = useNavCounts()
 
   // Sync only when parent adds new reviews (length increases), not on local deletes
   useEffect(() => {
@@ -72,6 +74,7 @@ export default function Dashboard({ reviews: initialReviews, onSelectReview }) {
     try {
       await deleteReview(id)
       setReviews((prev) => prev.filter((r) => r.id !== id))
+      refreshNavCounts()
     } catch (err) {
       alert(err.message)
     } finally {

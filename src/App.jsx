@@ -9,6 +9,7 @@ import { ToastProvider, useToast } from './components/Toast.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AIProviderSelect from './components/AIProviderSelect.jsx'
 import DeveloperSearch from './components/DeveloperSearch.jsx'
+import { useNavCounts } from './contexts/NavCounts.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
 import BatchReview from './pages/BatchReview.jsx'
 import DeveloperPage from './pages/DeveloperPage.jsx'
@@ -23,6 +24,7 @@ import { saveReview, getReviewHistory, getComparisons } from './services/supabas
 function HomePageInner() {
   const navigate = useNavigate()
   const addToast = useToast()
+  const { refresh: refreshNavCounts } = useNavCounts()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [review, setReview] = useState(null)
@@ -52,6 +54,7 @@ function HomePageInner() {
       setReview({ ...reviewResult, ai_provider: provider, id: saved?.id })
       await getReviewHistory().then(setHistory)
       setStatsKey((k) => k + 1)
+      refreshNavCounts()
 
       addToast('Review saved successfully!', 'success')
       if (saved?.id) {
