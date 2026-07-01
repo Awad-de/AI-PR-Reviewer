@@ -180,6 +180,20 @@ export async function getComparisons() {
   return data || []
 }
 
+export async function getStats() {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('score, verdict')
+
+  if (error || !data) return { total: 0, avgScore: 0, approved: 0, changesNeeded: 0 }
+
+  const total = data.length
+  const avgScore = total ? Math.round(data.reduce((s, r) => s + (r.score || 0), 0) / total) : 0
+  const approved = data.filter((r) => r.verdict === 'APPROVE').length
+  const changesNeeded = data.filter((r) => r.verdict === 'REQUEST_CHANGES').length
+  return { total, avgScore, approved, changesNeeded }
+}
+
 export async function deleteReview(id) {
   const { error } = await supabase.from('reviews').delete().eq('id', id)
   if (error) throw new Error(`Failed to delete: ${error.message}`)

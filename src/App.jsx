@@ -3,8 +3,12 @@ import { Routes, Route, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import PRInput from './components/PRInput.jsx'
 import ReviewReport from './components/ReviewReport.jsx'
+import SkeletonReview from './components/SkeletonReview.jsx'
+import StatsBar from './components/StatsBar.jsx'
+import { ToastProvider, useToast } from './components/Toast.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AIProviderSelect from './components/AIProviderSelect.jsx'
+import DeveloperSearch from './components/DeveloperSearch.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
 import BatchReview from './pages/BatchReview.jsx'
 import DeveloperPage from './pages/DeveloperPage.jsx'
@@ -16,15 +20,16 @@ import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
 import { saveReview, getReviewHistory, getComparisons } from './services/supabase.js'
 
-function HomePage() {
+function HomePageInner() {
   const navigate = useNavigate()
+  const addToast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [review, setReview] = useState(null)
   const [prData, setPrData] = useState(null)
   const [history, setHistory] = useState([])
   const [provider, setProvider] = useState('openai')
-  const [toast, setToast] = useState(null)
+  const [statsKey, setStatsKey] = useState(0)
 
   useEffect(() => {
     getReviewHistory().then(setHistory)
@@ -33,7 +38,6 @@ function HomePage() {
   async function handleAnalyze(url) {
     setIsLoading(true)
     setError(null)
-    setToast(null)
 
     try {
       const fetchedPR = await fetchPRData(url)
@@ -47,13 +51,20 @@ function HomePage() {
       setPrData(fetchedPR)
       setReview({ ...reviewResult, ai_provider: provider, id: saved?.id })
       await getReviewHistory().then(setHistory)
+      setStatsKey((k) => k + 1)
 
+      addToast('Review saved successfully!', 'success')
       if (saved?.id) {
-        setToast(saved.id)
-        setTimeout(() => setToast(null), 6000)
+        setTimeout(() => addToast(`View at /review/${saved.id.slice(0, 8)}…`, 'info', 5000), 500)
       }
     } catch (err) {
-      setError(err.message || 'An unexpected error occurred.')
+      const msg = err.message || 'An unexpected error occurred.'
+      setError(msg)
+      if (msg.includes('rate limit') || msg.includes('429')) {
+        addToast('AI rate limit exceeded. Retrying…', 'warning')
+      } else {
+        addToast(msg, 'error')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -61,21 +72,8 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Toast */}
-      {toast && (
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 shadow-xl text-sm">
-          <span className="text-green-400 font-medium">✅ Review saved!</span>
-          <button
-            onClick={() => navigate(`/review/${toast}`)}
-            className="text-indigo-400 hover:text-indigo-300 underline transition"
-          >
-            View at /review/{toast.slice(0, 8)}…
-          </button>
-          <button onClick={() => setToast(null)} className="ml-1 text-gray-500 hover:text-gray-300 transition">✕</button>
-        </div>
-      )}
-
       <Navbar />
+      <StatsBar refreshKey={statsKey} />
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         <section className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
@@ -88,18 +86,7 @@ function HomePage() {
           </div>
         </section>
 
-        {isLoading && (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400">
-            <svg className="animate-spin h-10 w-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-            </svg>
-            <div className="text-center">
-              <p className="font-medium text-gray-300">Analyzing your PR...</p>
-              <p className="text-sm text-gray-500 mt-1">Fetching diff and running AI review</p>
-            </div>
-          </div>
-        )}
+        {isLoading && <SkeletonReview />}
 
         {!isLoading && review && <ReviewReport prData={prData} review={review} />}
 
@@ -112,6 +99,14 @@ function HomePage() {
         )}
       </main>
     </div>
+  )
+}
+
+function HomePage() {
+  return (
+    <ToastProvider>
+      <HomePageInner />
+    </ToastProvider>
   )
 }
 

@@ -5,6 +5,7 @@ import { analyzeBatch } from '../services/batchReview.js'
 import ReviewReport from '../components/ReviewReport.jsx'
 import AIProviderSelect from '../components/AIProviderSelect.jsx'
 import Navbar from '../components/Navbar.jsx'
+import { ToastProvider, useToast } from '../components/Toast.jsx'
 
 const MAX_PRS = 5
 
@@ -22,8 +23,9 @@ const STATUS_ICON = {
   error: '❌',
 }
 
-export default function BatchReview() {
+function BatchReviewInner() {
   const navigate = useNavigate()
+  const addToast = useToast()
   const [text, setText] = useState('')
   const [provider, setProvider] = useState('openai')
   const [isRunning, setIsRunning] = useState(false)
@@ -95,6 +97,8 @@ export default function BatchReview() {
     setResults(finalResults)
     setDone(true)
     setIsRunning(false)
+    const successCount = finalResults.filter((r) => r.status === 'success').length
+    addToast(`Batch review complete! ${successCount} PR${successCount !== 1 ? 's' : ''} analyzed`, 'success', 5000)
   }
 
   const analyzedCount = statuses.filter((s) => s.status === 'success' || s.status === 'error').length
@@ -246,5 +250,13 @@ export default function BatchReview() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function BatchReview() {
+  return (
+    <ToastProvider>
+      <BatchReviewInner />
+    </ToastProvider>
   )
 }
