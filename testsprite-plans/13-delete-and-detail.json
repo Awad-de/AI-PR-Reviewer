@@ -1,0 +1,19 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter13 — Delete buttons + Comparison detail page + share link",
+  "description": "Verify delete button on reviews table in History, View/Delete buttons on Comparisons page, and the /comparisons/:id detail page with Copy Share Link button.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/dashboard" },
+    { "type": "assertion", "description": "The History page loads and shows the reviews table with column headers including Repository, PR Title, Score, Verdict" },
+    { "type": "assertion", "description": "Each review row in the table has a delete button (🗑️) visible in the Actions column" },
+    { "type": "assertion", "description": "Each review row also has a view link button (🔗) visible next to the delete button" },
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/comparisons" },
+    { "type": "assertion", "description": "The 'Saved Comparisons' heading is visible on the page" },
+    { "type": "assertion", "description": "Either the comparisons table with '🔗 View' and '🗑️' action buttons is visible, OR the empty state message 'No comparisons saved yet' is visible" },
+    { "type": "assertion", "description": "A '+ New Comparison' button is visible" },
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/compare" },
+    { "type": "assertion", "description": "The Compare Two PRs page loads correctly with Old PR URL and New PR URL inputs" }
+  ]
+}

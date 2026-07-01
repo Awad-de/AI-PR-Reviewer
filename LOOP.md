@@ -421,5 +421,6 @@ CREATE TABLE IF NOT EXISTS comparisons (
 | 10 | Developer Profile Page | `85b034ca` + `4c76cc69` | ✅ PASS (both tests — BLOCKED classification is confidence-level artefact, all assertions verified) |
 | 11 | PR Comparison | `0c29ae52` | ✅ PASS (15/15 steps) |
 | 12 | Unified Navbar + Comparisons Page | `42beb976` | ✅ PASS (20/20 steps) |
+| 13 | Delete buttons + Comparison detail + Share link | `67475cd5` | ✅ PASS (17/17 steps) |
 
-**All 12 features verified. App is production-ready. 🚀**
+**All 13 features verified. App is production-ready. 🚀**
