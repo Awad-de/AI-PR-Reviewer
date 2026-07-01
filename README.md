@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.png" width="96" height="96" style="border-radius:20px" alt="AI PR Reviewer" />
+  <img src="public/favicon.svg" width="96" height="96" alt="AI PR Reviewer" />
   <h1>AI PR Reviewer</h1>
 </div>
 
