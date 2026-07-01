@@ -11,7 +11,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 🌐 **Live:** https://ai-pr-reviewer-snowy.vercel.app  
 📦 **Repo:** https://github.com/Awad-de/AI-PR-Reviewer  
 🧪 **TestSprite Dashboard:** https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c  
-📋 **Loop Log:** [LOOP.md](./LOOP.md) — 16 iterations · 16 test runs · all passing
+📋 **Loop Log:** [LOOP.md](./LOOP.md) — 16 iterations · 15 features · 1 bug fix · 16 test runs · all passing
 
 ---
 
@@ -47,7 +47,7 @@ Write code → Deploy to Vercel → testsprite test create → Analyze verdict �
 
 Every feature was verified by a real TestSprite run against the live app before moving on. Every bug caught by TestSprite was fixed and re-verified. The full log lives in [`LOOP.md`](./LOOP.md).
 
-**16 iterations. 16 test runs. 0 skipped verifications.**
+**16 iterations. 15 features shipped. 1 bug fixed. 16 test runs. 0 skipped verifications.**
 
 ---
 
