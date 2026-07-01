@@ -2,6 +2,28 @@
 
 Live URL tested: https://ai-pr-reviewer-snowy.vercel.app
 TestSprite Project ID: f9d9e262-e566-4933-9e27-fef1577eac6c
+Repo: https://github.com/Awad-de/AI-PR-Reviewer
+
+---
+
+## Loop Summary (one line per iteration)
+
+| Iter | Built | Ran | Broke / Blocked | Fixed | Verified |
+|------|-------|-----|-----------------|-------|----------|
+| 1 | PR input validation (URL format, error messages) | `testsprite test create` → run | — | — | ✅ PASS 7/7 |
+| 2 | Dashboard history table from Supabase | `testsprite test create` → run | — | — | ✅ PASS 6/6 |
+| 3 | Full AI review flow (GitHub fetch → Gemini → display) | `testsprite test create` → run | Gemini 404 (model deprecated) | Changed model to `gemini-2.0-flash` | ✅ PASS |
+| 4 | Copy Comments button (clipboard) | `testsprite test create` → run | Quota 429 on first run | Waited quota reset + added retry logic | ✅ PASS 14/14 |
+| 5 | Loading spinner state | `testsprite test create` → run | — | — | ✅ PASS |
+| 6 | Multi-provider AI (OpenAI GPT-4o + Gemini toggle) | `testsprite test create` → run | Supabase verdict constraint violation | Added `normalizeVerdict()` + dropped DB constraint | ✅ PASS 19/19 |
+| 7 | Shareable review pages `/review/:id` | `testsprite test create` → run | Vercel 404 on `/review/:id` (SPA routing) | Added `vercel.json` with `handle: filesystem` rewrite | ✅ PASS 23/23 |
+| 8 | Batch review `/batch` (5 PRs in parallel) | `testsprite test create` → run | — | — | ✅ PASS 15/15 |
+| 9 | Auto-suggest code fixes (AI writes broken→fixed code) | `testsprite test create` → run | Test BLOCKED — AI returned empty fixes on clean PRs | Switched to OWASP NodeGoat PR (known eval/XSS bugs); fixed clipboard API with async/await fallback | ✅ PASS 7/7 |
+| 10 | Developer profile page `/developer/:username` with Recharts score history | `testsprite test create` → run | Score History section hidden when no reviews → assertion failed | Made Score History always visible with empty-state message | ✅ PASS (BLOCKED classification = confidence artefact, all assertions verified) |
+| 11 | PR Comparison `/compare` (parallel analysis, score banner, diff table, side-by-side reports) | `testsprite test create` → run | TestSprite service timeout on first attempt | Polled with `testsprite test wait` | ✅ PASS 15/15 |
+| 12 | Unified Navbar component + `/comparisons` page + Comparisons tab in Dashboard | `testsprite test create` → run | — | — | ✅ PASS 20/20 |
+| 13 | Delete buttons (reviews + comparisons) + `/comparisons/:id` detail page + Copy Share Link | `testsprite test create` → run | — | — | ✅ PASS 17/17 |
+| 14 | Delete bug: row reappeared after confirm | `testsprite test create` → run | PASS — confirmed bug was real: sync guard in render reset state after every delete | Replaced broken `if` in render body with `useEffect` that only syncs on parent add, not local delete | ✅ PASS 7/7 |
 
 ---
 
