@@ -367,6 +367,44 @@ ALTER TABLE reviews ADD COLUMN IF NOT EXISTS github_username text;
 
 ---
 
+## Iteration 11 — PR Comparison (/compare)
+
+**Date:** 2026-07-01
+
+### Changes Made
+- `src/pages/ComparePage.jsx` — new page: two PR URL inputs (red/green borders), AIProviderSelect, "⚡ Compare PRs" button, parallel analysis via `Promise.allSettled()`, Score Comparison Banner (old score red ↔ new score green + delta arrow), Diff Summary table (Category/Old/New/Change), side-by-side `ReviewReport` columns (❌ Old / ✅ New with ring borders), "💾 Save Comparison" button
+- `src/services/supabase.js` — added `saveComparison(data)` and `getComparisons()` functions
+- `src/App.jsx` — added `/compare` route, "Compare" button in both `HomePage` and `DashboardPage` navbars
+
+### Supabase Migration Required
+```sql
+CREATE TABLE IF NOT EXISTS comparisons (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at timestamptz DEFAULT now(),
+  old_pr_url text,
+  new_pr_url text,
+  old_score integer,
+  new_score integer,
+  score_delta integer,
+  old_review jsonb,
+  new_review jsonb,
+  old_pr_data jsonb,
+  new_pr_data jsonb,
+  ai_provider text DEFAULT 'openai'
+);
+```
+
+### TestSprite Results
+
+**Test — Compare page UI and full flow**
+- Run ID: `b30b3625-5e7a-4cde-b77d-7b3afc82a0fe`
+- Test ID: `0c29ae52-8089-4adb-a6ec-e51e3ed0c309`
+- Status: ✅ PASS
+- Steps: 15/15 (passed=15, failed=0)
+- Verified: /compare page loads ✅, Old/New PR inputs with correct colors ✅, Compare PRs button ✅, loading spinner ✅, Score Comparison Banner with delta arrow ✅, Diff Summary table ✅, side-by-side ❌/✅ columns ✅, Save Comparison button ✅
+
+---
+
 ## Final Summary
 
 | # | Feature | Test ID | Status |
@@ -381,5 +419,6 @@ ALTER TABLE reviews ADD COLUMN IF NOT EXISTS github_username text;
 | 8 | Batch Review | `24362a21` | ✅ PASS (15/15 steps) |
 | 9 | Auto-suggest Fix | `a2a0a890` | ✅ PASS (7/7 steps — OWASP PR with eval/XSS, fix cards + Copy Fix verified) |
 | 10 | Developer Profile Page | `85b034ca` + `4c76cc69` | ✅ PASS (both tests — BLOCKED classification is confidence-level artefact, all assertions verified) |
+| 11 | PR Comparison | `0c29ae52` | ✅ PASS (15/15 steps) |
 
-**All 10 features verified. App is production-ready. 🚀**
+**All 11 features verified. App is production-ready. 🚀**
