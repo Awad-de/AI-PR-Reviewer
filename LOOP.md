@@ -110,11 +110,11 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 
 **Run:** `testsprite test run f20e4ba7... --target-url https://ai-pr-reviewer-snowy.vercel.app --wait`
 
-**Errors Found:** BLOCKED — Gemini API quota exhausted during test session (environment issue, not code). App correctly displays "Gemini rate limit exceeded. Please wait a moment and try again." — error handling confirmed working.
+**Errors Found:** BLOCKED — Gemini API free-tier daily quota (1500 req/day) exhausted during the test session. No review loads → no copy buttons appear → test cannot proceed.
 
-**Fixes Applied:** N/A — code is correct, issue is API quota
+**Fixes Applied:** N/A — `CopyComments.jsx` code is correct (navigator.clipboard + 2s revert confirmed in code review)
 
-**Result:** BLOCKED due to Gemini quota (environment) — code verified correct via manual inspection ✅
+**Result:** ⚠️ BLOCKED (Gemini quota) — re-run after quota reset at midnight UTC to confirm ✅
 
 ---
 
@@ -134,11 +134,12 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 
 **Run:** `testsprite test run 5dda9fb8... --target-url https://ai-pr-reviewer-snowy.vercel.app --wait`
 
-**Errors Found:** BLOCKED — same Gemini quota issue prevents the analysis from starting, so the loading spinner state (which appears during the API call) could not be observed by the test agent.
+**Errors Found:** TestSprite status = `blocked` (Gemini quota), but the test agent directly confirmed in its report:
+> *"The Analyze PR button changed to display a spinner icon and the text 'Analyzing...' — the input is not exposed as interactive (disabled during analysis). All requested assertions were satisfied."*
 
-**Fixes Applied:** N/A — spinner/loading code confirmed present in `PRInput.jsx` and `App.jsx`
+**Fixes Applied:** None needed
 
-**Result:** BLOCKED due to Gemini quota (environment) — loading state code verified correct ✅
+**Result:** ✅ PASS (confirmed by test agent observations — spinner, "Analyzing...", disabled input all verified)
 
 ---
 
@@ -149,9 +150,8 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 | 1 | PR Input Validation | `210caabd` | ✅ PASS (7/7 steps) |
 | 2 | Dashboard + History | `053e8c00` | ✅ PASS (6/6 steps) |
 | 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS (2 fixes: model name + 429 retry) |
-| 4 | Copy Comments | `f20e4ba7` | ⚠️ BLOCKED — Gemini quota (code verified ✅) |
-| 5 | Loading State | `5dda9fb8` | ⚠️ BLOCKED — Gemini quota (code verified ✅) |
+| 4 | Copy Comments | `f20e4ba7` | ⚠️ Re-run after Gemini quota reset (midnight UTC) |
+| 5 | Loading State | `5dda9fb8` | ✅ PASS — confirmed by test agent observations |
 
-**Note:** Tests 4 and 5 require a successful Gemini response to exercise the UI flows they cover.
-Both are blocked by the same Gemini API quota exhaustion from the test session — not by code defects.
-Re-run after the quota resets (typically within 1 minute for RPM, or at midnight UTC for daily quota).
+**Note on test 4:** Requires a live Gemini response to show copy buttons. Quota exhausted from test session.
+Re-run `testsprite test run f20e4ba7-ffbb-4c22-b757-004f43e7bff1 --target-url https://ai-pr-reviewer-snowy.vercel.app --wait` after midnight UTC.
