@@ -85,7 +85,11 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 **Fixes Applied:**
 - Updated `src/services/gemini.js`: changed `GEMINI_MODEL` from `gemini-1.5-flash` → `gemini-2.0-flash`
 
-**Result:** `testsprite test rerun 070d3dfa...` → **PASS ✅** (after rerun with updated model)
+**First run result:** BLOCKED — `Gemini 429 quota exceeded` (ran too many parallel tests)
+
+**Fix Applied:** Added exponential backoff retry loop in `callGemini()` — up to 3 attempts, waits `2^attempt × 10s` between retries, reads `retryDelay` from Gemini error body when available.
+
+**Rerun:** `testsprite test run 070d3dfa...` → **PASS ✅** (after retry fix deployment)
 
 ---
 
@@ -136,6 +140,6 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 |---|---|---|---|
 | 1 | PR Input Validation | `210caabd` | ✅ PASS (7/7) |
 | 2 | Dashboard + History | `053e8c00` | ✅ PASS (6/6) |
-| 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS (after fix: gemini-2.0-flash) |
-| 4 | Copy Comments | `f20e4ba7` | ⏳ Queued |
-| 5 | Loading State | `5dda9fb8` | ⏳ Queued |
+| 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS (fix: gemini-2.0-flash + 429 retry) |
+| 4 | Copy Comments | `f20e4ba7` | ⏳ Pending deploy |
+| 5 | Loading State | `5dda9fb8` | ⏳ Pending deploy |
