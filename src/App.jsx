@@ -8,6 +8,7 @@ import DeveloperSearch from './components/DeveloperSearch.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
 import BatchReview from './pages/BatchReview.jsx'
 import DeveloperPage from './pages/DeveloperPage.jsx'
+import ComparePage from './pages/ComparePage.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
@@ -125,6 +126,12 @@ function HomePage() {
             >
               Batch Review
             </button>
+            <button
+              onClick={() => navigate('/compare')}
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
+            >
+              Compare
+            </button>
             <div className="ml-2 pl-2 border-l border-gray-700">
               <DeveloperSearch />
             </div>
@@ -211,6 +218,7 @@ export default function App() {
       <Route path="/review/:id" element={<ReviewPage />} />
       <Route path="/batch" element={<BatchReview />} />
       <Route path="/developer/:username" element={<DeveloperPage />} />
+      <Route path="/compare" element={<ComparePage />} />
     </Routes>
   )
 }
@@ -250,6 +258,12 @@ function DashboardPage() {
               className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
             >
               Batch Review
+            </a>
+            <a
+              href="/compare"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
+            >
+              Compare
             </a>
             <div className="ml-2 pl-2 border-l border-gray-700">
               <DeveloperSearch />

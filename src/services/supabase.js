@@ -131,3 +131,51 @@ export function getDeveloperStats(reviews) {
 
   return { total, avgScore, approveRate, mostRecentDate }
 }
+
+/**
+ * Saves a PR comparison to Supabase.
+ *
+ * @param {Object} data - { old_pr_url, new_pr_url, old_review, new_review, old_pr_data, new_pr_data, score_delta, ai_provider }
+ * @returns {Promise<Object>} The inserted row
+ */
+export async function saveComparison(data) {
+  const { data: row, error } = await supabase
+    .from('comparisons')
+    .insert({
+      old_pr_url: data.old_pr_url,
+      new_pr_url: data.new_pr_url,
+      old_score: data.old_review.score,
+      new_score: data.new_review.score,
+      score_delta: data.new_review.score - data.old_review.score,
+      old_review: data.old_review,
+      new_review: data.new_review,
+      old_pr_data: data.old_pr_data,
+      new_pr_data: data.new_pr_data,
+      ai_provider: data.ai_provider ?? 'openai',
+    })
+    .select()
+    .single()
+
+  if (error) throw new Error(`Failed to save comparison: ${error.message}`)
+  return row
+}
+
+/**
+ * Retrieves the 20 most recent PR comparisons from Supabase.
+ *
+ * @returns {Promise<Array>} Array of comparison rows, newest first
+ */
+export async function getComparisons() {
+  const { data, error } = await supabase
+    .from('comparisons')
+    .select('id, created_at, old_pr_url, new_pr_url, old_score, new_score, score_delta, ai_provider')
+    .order('created_at', { ascending: false })
+    .limit(20)
+
+  if (error) {
+    console.error('Failed to load comparisons:', error.message)
+    return []
+  }
+
+  return data || []
+}
