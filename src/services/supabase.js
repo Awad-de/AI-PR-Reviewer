@@ -179,3 +179,23 @@ export async function getComparisons() {
 
   return data || []
 }
+
+export async function getComparisonById(id) {
+  const { data, error } = await supabase
+    .from('comparisons')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) return null
+  return data
+}
+
+export async function deleteComparison(id) {
+  const { error } = await supabase
+    .from('comparisons')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw new Error(`Failed to delete: ${error.message}`)
+}

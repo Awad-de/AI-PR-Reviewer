@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
-import { getComparisons } from '../services/supabase.js'
+import { getComparisons, deleteComparison } from '../services/supabase.js'
 
 function deltaColor(delta) {
   if (delta > 0) return 'text-green-400'
@@ -28,6 +28,7 @@ export default function ComparisonsPage() {
   const navigate = useNavigate()
   const [comparisons, setComparisons] = useState([])
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(null)
 
   useEffect(() => {
     getComparisons().then((data) => {
@@ -35,6 +36,19 @@ export default function ComparisonsPage() {
       setLoading(false)
     })
   }, [])
+
+  async function handleDelete(id) {
+    if (!window.confirm('Delete this comparison?')) return
+    setDeleting(id)
+    try {
+      await deleteComparison(id)
+      setComparisons((prev) => prev.filter((c) => c.id !== id))
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setDeleting(null)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -78,11 +92,11 @@ export default function ComparisonsPage() {
                 <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
                   <th className="px-5 py-3 text-left font-medium">Old PR</th>
                   <th className="px-5 py-3 text-left font-medium">New PR</th>
-                  <th className="px-5 py-3 text-center font-medium text-red-400">Old Score</th>
-                  <th className="px-5 py-3 text-center font-medium text-green-400">New Score</th>
+                  <th className="px-5 py-3 text-center font-medium text-red-400">Old</th>
+                  <th className="px-5 py-3 text-center font-medium text-green-400">New</th>
                   <th className="px-5 py-3 text-center font-medium">Delta</th>
-                  <th className="px-5 py-3 text-left font-medium">AI</th>
                   <th className="px-5 py-3 text-left font-medium">Date</th>
+                  <th className="px-5 py-3 text-center font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
@@ -98,8 +112,26 @@ export default function ComparisonsPage() {
                         {' '}{c.score_delta > 0 ? '↑' : c.score_delta < 0 ? '↓' : '—'}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-gray-500 text-xs uppercase">{c.ai_provider}</td>
                     <td className="px-5 py-3 text-gray-500 text-xs">{formatDate(c.created_at)}</td>
+                    <td className="px-5 py-3 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => navigate(`/comparisons/${c.id}`)}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/40 transition"
+                          title="View details & share link"
+                        >
+                          🔗 View
+                        </button>
+                        <button
+                          onClick={() => handleDelete(c.id)}
+                          disabled={deleting === c.id}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-red-900/20 text-red-400 hover:bg-red-900/40 disabled:opacity-40 transition"
+                          title="Delete comparison"
+                        >
+                          {deleting === c.id ? '…' : '🗑️'}
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -10,6 +10,7 @@ import BatchReview from './pages/BatchReview.jsx'
 import DeveloperPage from './pages/DeveloperPage.jsx'
 import ComparePage from './pages/ComparePage.jsx'
 import ComparisonsPage from './pages/ComparisonsPage.jsx'
+import ComparisonDetailPage from './pages/ComparisonDetailPage.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
@@ -196,6 +197,7 @@ function DashboardPage() {
                     <th className="px-5 py-3 text-center font-medium text-green-400">New</th>
                     <th className="px-5 py-3 text-center font-medium">Delta</th>
                     <th className="px-5 py-3 text-left font-medium">Date</th>
+                    <th className="px-5 py-3"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
@@ -203,7 +205,7 @@ function DashboardPage() {
                     const delta = c.score_delta
                     const dCls = delta > 0 ? 'text-green-400' : delta < 0 ? 'text-red-400' : 'text-gray-500'
                     return (
-                      <tr key={c.id} className="hover:bg-gray-800/40 transition">
+                      <tr key={c.id} className="hover:bg-gray-800/40 transition cursor-pointer" onClick={() => navigate(`/comparisons/${c.id}`)}>
                         <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.old_pr_url)}</td>
                         <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.new_pr_url)}</td>
                         <td className="px-5 py-3 text-center font-bold text-red-400">{c.old_score}</td>
@@ -216,6 +218,7 @@ function DashboardPage() {
                         <td className="px-5 py-3 text-gray-500 text-xs">
                           {new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </td>
+                        <td className="px-5 py-3 text-gray-600 text-base">🔗</td>
                       </tr>
                     )
                   })}
@@ -239,6 +242,7 @@ export default function App() {
       <Route path="/developer/:username" element={<DeveloperPage />} />
       <Route path="/compare" element={<ComparePage />} />
       <Route path="/comparisons" element={<ComparisonsPage />} />
+      <Route path="/comparisons/:id" element={<ComparisonDetailPage />} />
     </Routes>
   )
 }
