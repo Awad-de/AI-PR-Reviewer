@@ -38,37 +38,25 @@ function CodeBlock({ code, label, colorClass }) {
   )
 }
 
-function copyToClipboard(text) {
-  try {
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).catch(() => copyFallback(text))
-    } else {
-      copyFallback(text)
-    }
-  } catch {
-    copyFallback(text)
-  }
-}
-
-function copyFallback(text) {
-  try {
-    const el = document.createElement('textarea')
-    el.value = text
-    el.style.position = 'fixed'
-    el.style.opacity = '0'
-    document.body.appendChild(el)
-    el.focus()
-    el.select()
-    document.execCommand('copy')
-    document.body.removeChild(el)
-  } catch {}
-}
-
 function SuggestionCard({ suggestion, index }) {
   const [copied, setCopied] = useState(false)
 
-  function handleCopy() {
-    copyToClipboard(suggestion.fixed_code)
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(suggestion.fixed_code)
+    } catch {
+      try {
+        const el = document.createElement('textarea')
+        el.value = suggestion.fixed_code
+        el.style.position = 'fixed'
+        el.style.opacity = '0'
+        document.body.appendChild(el)
+        el.focus()
+        el.select()
+        document.execCommand('copy')
+        document.body.removeChild(el)
+      } catch {}
+    }
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
