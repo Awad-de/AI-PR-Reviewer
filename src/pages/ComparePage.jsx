@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar.jsx'
 import ReviewReport from '../components/ReviewReport.jsx'
 import AIProviderSelect from '../components/AIProviderSelect.jsx'
 import { fetchPRData } from '../services/github.js'
@@ -173,24 +174,9 @@ export default function ComparePage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🔍</span>
-            <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
-          </div>
-          <nav className="flex gap-1">
-            <a href="/" className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition">Review</a>
-            <a href="/dashboard" className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition">History</a>
-            <a href="/batch" className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition">Batch Review</a>
-            <span className="px-4 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 text-white">Compare</span>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-        <button onClick={() => navigate(-1)} className="text-sm text-gray-400 hover:text-white transition flex items-center gap-1">← Back</button>
 
         {/* Input section */}
         <section className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5">

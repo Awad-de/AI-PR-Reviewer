@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar.jsx'
 import ReviewReport from '../components/ReviewReport.jsx'
 import { getReviewById } from '../services/supabase.js'
 
@@ -20,37 +21,34 @@ export default function ReviewPage() {
     load()
   }, [id])
 
-  function handleCopyLink() {
-    navigator.clipboard.writeText(window.location.href).catch(() => {
+  async function handleCopyLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+    } catch {
       const el = document.createElement('textarea')
       el.value = window.location.href
       document.body.appendChild(el)
       el.select()
       document.execCommand('copy')
       document.body.removeChild(el)
-    })
+    }
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Top bar */}
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <Navbar />
+
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        {/* Actions row */}
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate('/dashboard')}
             className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition"
           >
-            <span>←</span>
-            <span>Back to Dashboard</span>
+            ← Back to Dashboard
           </button>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🔍</span>
-            <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
-          </div>
-
           <button
             onClick={handleCopyLink}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition border ${
@@ -62,9 +60,7 @@ export default function ReviewPage() {
             {copied ? '✓ Copied!' : '🔗 Copy Share Link'}
           </button>
         </div>
-      </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
         {loading && (
           <div className="space-y-4 animate-pulse">
             <div className="h-8 bg-gray-800 rounded-lg w-2/3" />
@@ -89,9 +85,7 @@ export default function ReviewPage() {
           </div>
         )}
 
-        {!loading && review && (
-          <ReviewReport prData={null} review={review} />
-        )}
+        {!loading && review && <ReviewReport prData={null} review={review} />}
       </main>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar.jsx'
 import {
   LineChart,
   Line,
@@ -63,35 +64,7 @@ export default function DeveloperPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🔍</span>
-            <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
-          </div>
-          <nav className="flex gap-1">
-            <a
-              href="/"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Review
-            </a>
-            <a
-              href="/dashboard"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              History
-            </a>
-            <a
-              href="/batch"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Batch Review
-            </a>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Back */}

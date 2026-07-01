@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
+import Navbar from './components/Navbar.jsx'
 import PRInput from './components/PRInput.jsx'
 import ReviewReport from './components/ReviewReport.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AIProviderSelect from './components/AIProviderSelect.jsx'
-import DeveloperSearch from './components/DeveloperSearch.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
 import BatchReview from './pages/BatchReview.jsx'
 import DeveloperPage from './pages/DeveloperPage.jsx'
 import ComparePage from './pages/ComparePage.jsx'
+import ComparisonsPage from './pages/ComparisonsPage.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
@@ -21,18 +22,12 @@ function HomePage() {
   const [review, setReview] = useState(null)
   const [prData, setPrData] = useState(null)
   const [history, setHistory] = useState([])
-  const [activeTab, setActiveTab] = useState('review')
   const [provider, setProvider] = useState('openai')
   const [toast, setToast] = useState(null)
 
   useEffect(() => {
-    loadHistory()
+    getReviewHistory().then(setHistory)
   }, [])
-
-  async function loadHistory() {
-    const data = await getReviewHistory()
-    setHistory(data)
-  }
 
   async function handleAnalyze(url) {
     setIsLoading(true)
@@ -41,7 +36,6 @@ function HomePage() {
 
     try {
       const fetchedPR = await fetchPRData(url)
-
       const reviewResult =
         provider === 'openai'
           ? await reviewWithOpenAI(fetchedPR)
@@ -51,8 +45,7 @@ function HomePage() {
 
       setPrData(fetchedPR)
       setReview({ ...reviewResult, ai_provider: provider, id: saved?.id })
-      setActiveTab('review')
-      await loadHistory()
+      await getReviewHistory().then(setHistory)
 
       if (saved?.id) {
         setToast(saved.id)
@@ -77,71 +70,13 @@ function HomePage() {
           >
             View at /review/{toast.slice(0, 8)}…
           </button>
-          <button
-            onClick={() => setToast(null)}
-            className="ml-1 text-gray-500 hover:text-gray-300 transition"
-          >
-            ✕
-          </button>
+          <button onClick={() => setToast(null)} className="ml-1 text-gray-500 hover:text-gray-300 transition">✕</button>
         </div>
       )}
 
-      {/* Top bar */}
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🔍</span>
-            <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
-          </div>
+      <Navbar />
 
-          <nav className="flex items-center gap-1">
-            <button
-              onClick={() => setActiveTab('review')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
-                activeTab === 'review'
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
-              }`}
-            >
-              Review
-            </button>
-            <button
-              onClick={() => { setActiveTab('history'); navigate('/dashboard') }}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
-                activeTab === 'history'
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
-              }`}
-            >
-              History
-              {history.length > 0 && (
-                <span className="ml-1.5 bg-gray-700 text-gray-300 text-xs px-1.5 py-0.5 rounded-full">
-                  {history.length}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => navigate('/batch')}
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Batch Review
-            </button>
-            <button
-              onClick={() => navigate('/compare')}
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Compare
-            </button>
-            <div className="ml-2 pl-2 border-l border-gray-700">
-              <DeveloperSearch />
-            </div>
-          </nav>
-        </div>
-      </header>
-
-      {/* Main content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-        {/* PR Input — always visible */}
         <section className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
           <AIProviderSelect selectedProvider={provider} onProviderChange={setProvider} />
           <div>
@@ -152,59 +87,55 @@ function HomePage() {
           </div>
         </section>
 
-        {/* Tab: Review */}
-        {activeTab === 'review' && (
-          <>
-            {isLoading && (
-              <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400">
-                <svg
-                  className="animate-spin h-10 w-10 text-indigo-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  />
-                </svg>
-                <div className="text-center">
-                  <p className="font-medium text-gray-300">Analyzing your PR...</p>
-                  <p className="text-sm text-gray-500 mt-1">Fetching diff and running AI review</p>
-                </div>
-              </div>
-            )}
-
-            {!isLoading && review && (
-              <ReviewReport prData={prData} review={review} />
-            )}
-
-            {!isLoading && !review && (
-              <div className="flex flex-col items-center justify-center py-20 text-gray-600">
-                <p className="text-5xl mb-4">📋</p>
-                <p className="text-base">Your review will appear here</p>
-                <p className="text-sm mt-1">Paste a PR URL above and click "Analyze PR"</p>
-              </div>
-            )}
-          </>
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400">
+            <svg className="animate-spin h-10 w-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            </svg>
+            <div className="text-center">
+              <p className="font-medium text-gray-300">Analyzing your PR...</p>
+              <p className="text-sm text-gray-500 mt-1">Fetching diff and running AI review</p>
+            </div>
+          </div>
         )}
 
-        {/* Tab: History */}
-        {activeTab === 'history' && (
-          <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <h2 className="text-base font-semibold text-gray-300 mb-6">Review History</h2>
-            <Dashboard reviews={history} onSelectReview={() => {}} />
-          </section>
+        {!isLoading && review && <ReviewReport prData={prData} review={review} />}
+
+        {!isLoading && !review && (
+          <div className="flex flex-col items-center justify-center py-20 text-gray-600">
+            <p className="text-5xl mb-4">📋</p>
+            <p className="text-base">Your review will appear here</p>
+            <p className="text-sm mt-1">Paste a PR URL above and click "Analyze PR"</p>
+          </div>
         )}
+      </main>
+    </div>
+  )
+}
+
+function DashboardPage() {
+  const [history, setHistory] = useState([])
+
+  useEffect(() => {
+    getReviewHistory().then(setHistory)
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white">
+      <Navbar />
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <h2 className="text-base font-semibold text-gray-300 mb-6">
+            Review History
+            {history.length > 0 && (
+              <span className="ml-2 bg-gray-700 text-gray-400 text-xs px-2 py-0.5 rounded-full">
+                {history.length}
+              </span>
+            )}
+          </h2>
+          <Dashboard reviews={history} onSelectReview={() => {}} />
+        </section>
       </main>
     </div>
   )
@@ -219,64 +150,7 @@ export default function App() {
       <Route path="/batch" element={<BatchReview />} />
       <Route path="/developer/:username" element={<DeveloperPage />} />
       <Route path="/compare" element={<ComparePage />} />
+      <Route path="/comparisons" element={<ComparisonsPage />} />
     </Routes>
-  )
-}
-
-function DashboardPage() {
-  const [history, setHistory] = useState([])
-
-  useEffect(() => {
-    getReviewHistory().then(setHistory)
-  }, [])
-
-  return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🔍</span>
-            <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
-          </div>
-          <nav className="flex items-center gap-1">
-            <a
-              href="/"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Review
-            </a>
-            <span className="px-4 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 text-white">
-              History
-              {history.length > 0 && (
-                <span className="ml-1.5 bg-indigo-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                  {history.length}
-                </span>
-              )}
-            </span>
-            <a
-              href="/batch"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Batch Review
-            </a>
-            <a
-              href="/compare"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            >
-              Compare
-            </a>
-            <div className="ml-2 pl-2 border-l border-gray-700">
-              <DeveloperSearch />
-            </div>
-          </nav>
-        </div>
-      </header>
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-base font-semibold text-gray-300 mb-6">Review History</h2>
-          <Dashboard reviews={history} onSelectReview={() => {}} />
-        </section>
-      </main>
-    </div>
   )
 }
