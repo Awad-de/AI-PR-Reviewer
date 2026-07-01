@@ -126,6 +126,7 @@ function DashboardPage() {
   const [history, setHistory] = useState([])
   const [comparisons, setComparisons] = useState([])
   const [tab, setTab] = useState('reviews')
+  const { reviewCount, comparisonCount } = useNavCounts()
 
   useEffect(() => {
     getReviewHistory().then(setHistory)
@@ -147,9 +148,7 @@ function DashboardPage() {
             }`}
           >
             Reviews
-            {history.length > 0 && (
-              <span className="ml-1.5 bg-gray-700 text-gray-400 text-xs px-1.5 py-0.5 rounded-full">{history.length}</span>
-            )}
+            <span className="ml-1.5 bg-gray-700 text-gray-300 text-xs px-1.5 py-0.5 rounded-full">{reviewCount}</span>
           </button>
           <button
             onClick={() => setTab('comparisons')}
@@ -160,9 +159,7 @@ function DashboardPage() {
             }`}
           >
             Comparisons
-            {comparisons.length > 0 && (
-              <span className="ml-1.5 bg-gray-700 text-gray-400 text-xs px-1.5 py-0.5 rounded-full">{comparisons.length}</span>
-            )}
+            <span className="ml-1.5 bg-gray-700 text-gray-300 text-xs px-1.5 py-0.5 rounded-full">{comparisonCount}</span>
           </button>
         </div>
 
