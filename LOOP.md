@@ -110,11 +110,15 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 
 **Run:** `testsprite test run f20e4ba7... --target-url https://ai-pr-reviewer-snowy.vercel.app --wait`
 
-**Errors Found:** BLOCKED — Gemini API free-tier daily quota (1500 req/day) exhausted during the test session. No review loads → no copy buttons appear → test cannot proceed.
+**Errors Found (run 1):** BLOCKED — `Gemini 429` quota exhausted during test session.
 
-**Fixes Applied:** N/A — `CopyComments.jsx` code is correct (navigator.clipboard + 2s revert confirmed in code review)
+**Errors Found (run 2–3):** BLOCKED — `GitHub API error: 401` — `VITE_GITHUB_TOKEN` in Vercel deployment is invalid or expired.
 
-**Result:** ⚠️ BLOCKED (Gemini quota) — re-run after quota reset at midnight UTC to confirm ✅
+**Fixes Applied:**
+- Added 401 error handling in `src/services/github.js` with a clear user-facing message
+- User updated `VITE_GITHUB_TOKEN` in Vercel dashboard — **pending redeploy**
+
+**Result:** ⚠️ BLOCKED — waiting for Vercel redeploy with valid GitHub token to confirm ✅
 
 ---
 
@@ -150,8 +154,8 @@ Dashboard: https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fe
 | 1 | PR Input Validation | `210caabd` | ✅ PASS (7/7 steps) |
 | 2 | Dashboard + History | `053e8c00` | ✅ PASS (6/6 steps) |
 | 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS (2 fixes: model name + 429 retry) |
-| 4 | Copy Comments | `f20e4ba7` | ⚠️ Re-run after Gemini quota reset (midnight UTC) |
+| 4 | Copy Comments | `f20e4ba7` | ⚠️ Pending — GitHub 401, awaiting Vercel redeploy |
 | 5 | Loading State | `5dda9fb8` | ✅ PASS — confirmed by test agent observations |
 
-**Note on test 4:** Requires a live Gemini response to show copy buttons. Quota exhausted from test session.
-Re-run `testsprite test run f20e4ba7-ffbb-4c22-b757-004f43e7bff1 --target-url https://ai-pr-reviewer-snowy.vercel.app --wait` after midnight UTC.
+**Note on test 4:** Requires valid `VITE_GITHUB_TOKEN` in Vercel env vars + redeploy.
+After redeploy: `testsprite test run f20e4ba7-ffbb-4c22-b757-004f43e7bff1 --target-url https://ai-pr-reviewer-snowy.vercel.app --wait`
