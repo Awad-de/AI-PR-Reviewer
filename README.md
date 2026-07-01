@@ -1,20 +1,20 @@
-# 🔍 AI PR Reviewer
+# AI PR Reviewer
 
-An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS, OpenAI GPT-4o / Gemini 2.0 Flash, and Supabase — developed iteratively with a full **write → verify → fix → verify** loop using the TestSprite CLI.
+An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS, OpenAI GPT-4o / Gemini 2.0 Flash, and Supabase — developed iteratively with a full **write → deploy → verify → fix → verify** loop using the TestSprite CLI.
 
-**🔗 Live URL:** https://ai-pr-reviewer-snowy.vercel.app
+**Live URL:** https://ai-pr-reviewer-snowy.vercel.app
 
-**📦 Repo:** https://github.com/Awad-de/AI-PR-Reviewer
+**Repo:** https://github.com/Awad-de/AI-PR-Reviewer
 
-**🧪 TestSprite Project:** 14 iterations, 14 test runs, all passing
+**TestSprite Project:** 16 iterations · 16 test runs · all passing
 
 ---
 
 ## Features
 
 | # | Feature | Route |
-|---|---|---|
-| 1 | **AI Code Review** — quality score 0–100, verdict, summary, 5 categories | `/` |
+|---|---------|-------|
+| 1 | **AI Code Review** — quality score 0–100, verdict, summary, 5 category cards | `/` |
 | 2 | **Multi-Provider AI** — switch between OpenAI GPT-4o & Gemini 2.0 Flash | `/` |
 | 3 | **Auto-suggest Fixes** — AI writes broken vs fixed code side-by-side with syntax highlighting | `/` |
 | 4 | **Batch Review** — analyze up to 5 PRs in parallel with progress bar + summary | `/batch` |
@@ -22,8 +22,13 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 | 6 | **PR Comparison** — compare two PRs with score banner, diff table, side-by-side reports | `/compare` |
 | 7 | **Saved Comparisons** — view, share, and delete saved comparisons | `/comparisons` |
 | 8 | **Developer Profile** — GitHub avatar, score history chart (Recharts), stats, all reviews | `/developer/:username` |
-| 9 | **Review History** — full dashboard with filter by AI provider, delete button, share link | `/dashboard` |
+| 9 | **Review History** — dashboard with AI-provider filter, delete button, share link | `/dashboard` |
 | 10 | **Copy-to-GitHub Comments** — one-click copy of ready-to-paste review comments | `/` |
+| 11 | **Skeleton Loading** — animated gray pulse blocks replace the spinner while AI analyzes | `/` |
+| 12 | **Toast Notifications** — slide-in success / error / warning / info toasts (auto-dismiss 3s) | all pages |
+| 13 | **Confetti + Excellence Banner** — pure-CSS confetti + gold banner when score ≥ 90 | `/` |
+| 14 | **Stats Bar** — animated count-up strip: Total Reviews · Avg Score · Approved · Changes Needed | `/` |
+| 15 | **Live Nav Badges** — History and Comparisons nav links show live item counts, update instantly on add/delete | all pages |
 
 ---
 
@@ -35,24 +40,26 @@ This project was built entirely through a **TestSprite verification loop**:
 Write code → Deploy to Vercel → testsprite test create → Analyze verdict → Fix → Re-run
 ```
 
-Every feature was verified by a real TestSprite run against the live app before moving on. The full log lives in [`LOOP.md`](./LOOP.md).
+Every feature was verified by a real TestSprite run against the live app before moving on. Every bug caught by TestSprite was fixed and re-verified. The full log lives in [`LOOP.md`](./LOOP.md).
 
-**14 iterations. 14 test runs. 0 skipped verifications.**
+**16 iterations. 16 test runs. 0 skipped verifications.**
 
 ---
 
 ## Tech Stack
 
 | Layer | Technology |
-|---|---|
+|-------|------------|
 | Frontend | React 18 + Vite + Tailwind CSS |
 | Charts | Recharts |
+| Syntax Highlighting | highlight.js |
 | AI — Option 1 | OpenAI GPT-4o mini |
 | AI — Option 2 | Google Gemini 2.0 Flash |
 | GitHub Data | GitHub REST API v3 |
 | Database | Supabase (PostgreSQL + RLS) |
 | Deployment | Vercel |
 | Testing | TestSprite CLI |
+| CI/CD | GitHub Actions |
 
 ---
 
@@ -68,7 +75,7 @@ npm install
 
 ### 2. Environment variables
 
-Create `.env` and fill in:
+Create `.env`:
 
 ```bash
 VITE_OPENAI_API_KEY=your_openai_api_key_here
@@ -79,7 +86,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ```
 
 | Variable | Where to get it |
-|---|---|
+|----------|----------------|
 | `VITE_OPENAI_API_KEY` | [OpenAI Platform](https://platform.openai.com/api-keys) |
 | `VITE_GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com/app/apikey) |
 | `VITE_GITHUB_TOKEN` | [GitHub Settings → Tokens](https://github.com/settings/tokens) — `repo` scope |
@@ -103,6 +110,7 @@ CREATE TABLE reviews (
 );
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow all" ON reviews FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow delete" ON reviews FOR DELETE USING (true);
 
 -- Comparisons table
 CREATE TABLE comparisons (
@@ -131,11 +139,14 @@ npm run dev
 ```
 src/
 ├── components/
-│   ├── Navbar.jsx            # Shared navbar with active-link highlighting
+│   ├── Navbar.jsx            # Shared navbar with badges + active-link highlighting
 │   ├── AIProviderSelect.jsx  # OpenAI / Gemini toggle
 │   ├── DeveloperSearch.jsx   # Username search → /developer/:username
 │   ├── PRInput.jsx           # URL input + validation
-│   ├── ReviewReport.jsx      # Full review layout
+│   ├── ReviewReport.jsx      # Full review layout + confetti + fade-in
+│   ├── SkeletonReview.jsx    # Animated skeleton placeholder while loading
+│   ├── StatsBar.jsx          # Animated count-up stats strip
+│   ├── Toast.jsx             # ToastProvider + useToast() hook
 │   ├── ReviewCard.jsx        # Per-category card
 │   ├── ScoreBar.jsx          # Animated score bar
 │   ├── MergeVerdict.jsx      # Verdict badge
@@ -149,12 +160,14 @@ src/
 │   ├── ComparePage.jsx       # /compare — side-by-side PR comparison
 │   ├── ComparisonsPage.jsx   # /comparisons — saved comparisons list
 │   └── ComparisonDetailPage.jsx  # /comparisons/:id — detail + share
+├── contexts/
+│   └── NavCounts.jsx         # Live badge counts context (reviews + comparisons)
 ├── services/
 │   ├── github.js             # GitHub REST API
 │   ├── gemini.js             # Gemini 2.0 Flash
 │   ├── openai.js             # OpenAI GPT-4o mini
 │   ├── batchReview.js        # Parallel batch analysis
-│   └── supabase.js           # All DB operations
+│   └── supabase.js           # All DB operations + getStats()
 ├── utils/
 │   └── parseGitHubURL.js
 ├── App.jsx
@@ -166,7 +179,7 @@ src/
 ## Test Coverage (TestSprite)
 
 | # | Feature | Test ID | Result |
-|---|---|---|---|
+|---|---------|---------|--------|
 | 1 | PR Input Validation | `210caabd` | ✅ 7/7 |
 | 2 | Dashboard + History | `053e8c00` | ✅ 6/6 |
 | 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS |
@@ -181,6 +194,8 @@ src/
 | 12 | Unified Navbar + Comparisons | `42beb976` | ✅ 20/20 |
 | 13 | Delete + Detail + Share Link | `67475cd5` | ✅ 17/17 |
 | 14 | Delete Bug Fix | `8c4acdd4` | ✅ 7/7 |
+| 15 | Polish — Skeleton + Toast + Confetti + StatsBar | `52e098cf` `10f6b888` `acc0114b` | ✅ PASS |
+| 16 | Live Nav Badges (History + Comparisons) | `b4cd720d` `6952c9fd` | ✅ 13/13 |
 
 Full loop log: [`LOOP.md`](./LOOP.md)
 
@@ -189,12 +204,16 @@ Full loop log: [`LOOP.md`](./LOOP.md)
 ## Try it
 
 ```
-# Single PR review
+# Single PR review (has security bugs → good for testing Auto-suggest)
 https://github.com/OWASP/NodeGoat/pull/300
 
 # Compare two PRs
 https://github.com/vercel/next.js/pull/95370  vs  https://github.com/vercel/next.js/pull/95371
 
 # Developer profile
-/developer/torvalds
+https://ai-pr-reviewer-snowy.vercel.app/developer/torvalds
+
+# Batch review (paste each on a new line)
+https://github.com/OWASP/NodeGoat/pull/300
+https://github.com/vercel/next.js/pull/1
 ```
