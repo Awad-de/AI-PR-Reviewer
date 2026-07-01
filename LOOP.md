@@ -192,6 +192,45 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_verdict_check;
 
 ---
 
+## Iteration 7 — Shareable Review Page (/review/:id)
+
+**Code changes pushed:** `badf777`, `11937c2`, `cd42009`
+- `npm install react-router-dom`
+- `src/main.jsx` — wrapped app in `BrowserRouter`
+- `src/App.jsx` — added `Routes` with `/`, `/dashboard`, `/review/:id`; added toast after save showing `/review/{id}` link
+- `src/pages/ReviewPage.jsx` — new page: fetches review by id, shows `ReviewReport`, Back to Dashboard + Copy Share Link buttons with "✓ Copied!" state
+- `src/components/Dashboard.jsx` — rows navigate to `/review/:id` via `useNavigate`, added `🔗` icon column
+- `src/services/supabase.js` — added `getReviewById(id)` function
+- `vercel.json` — added SPA fallback routes (`filesystem` handler + `/(.*) → /index.html`) so `/dashboard` and `/review/:id` return 200
+
+**TestSprite test created:** `5ed09e9b-00ad-4e1f-937b-fa58797b98e1`
+
+**Test plan steps:**
+1. Navigate to home page
+2. Paste `https://github.com/vercel/next.js/pull/1` → click Analyze PR → wait
+3. Assert review appears
+4. Navigate to /dashboard
+5. Assert table visible with 🔗 icon
+6. Click first review row
+7. Assert URL changes to /review/:uuid
+8. Assert full review report visible (score, verdict, summary)
+9. Assert "🔗 Copy Share Link" button visible
+10. Click copy button → assert text changes to "✓ Copied!"
+11. Assert "← Back to Dashboard" button visible
+12. Click back → assert URL returns to /dashboard
+
+**Errors Found:**
+1. `/dashboard` and `/review/:id` returned Vercel 404 — SPA routing not configured
+   - Fix: Added `vercel.json` with `rewrites` (first attempt), then switched to `routes + filesystem handler` (correct format)
+2. TestSprite timed out at 600s during AI analysis (slow model call) — continued polling with `testsprite test wait`
+
+**Fixes Applied:**
+- `vercel.json` with `routes` + `filesystem` handler for SPA fallback
+
+**Result:** ✅ PASS — 23/23 steps
+
+---
+
 ## Final Summary
 
 | # | Feature | Test ID | Status |
@@ -202,5 +241,6 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_verdict_check;
 | 4 | Copy Comments | `f20e4ba7` | ✅ PASS (14/14 steps) |
 | 5 | Loading State | `5dda9fb8` | ✅ PASS |
 | 6 | Multi-Provider AI | `f158a268` | ✅ PASS (19/19 steps) |
+| 7 | Shareable Review Page | `5ed09e9b` | ✅ PASS (23/23 steps) |
 
-**All 6 features verified. App is production-ready. 🚀**
+**All 7 features verified. App is production-ready. 🚀**
