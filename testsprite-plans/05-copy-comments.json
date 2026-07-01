@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Copy button copies comment text and shows Copied confirmation",
+  "description": "After a review is completed, each ready-to-paste comment box has a Copy button. Clicking it copies the text to clipboard and changes the button label to 'Copied ✓' for 2 seconds before reverting.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input and click Analyze PR" },
+    { "type": "action", "description": "Wait for the review report to fully load" },
+    { "type": "action", "description": "Scroll down to the Ready-to-Paste Comments section" },
+    { "type": "assertion", "description": "At least one comment box is visible with a Copy button in the top right corner of the box" },
+    { "type": "action", "description": "Click the Copy button on the first comment box" },
+    { "type": "assertion", "description": "The Copy button label changes to 'Copied ✓' immediately after clicking" },
+    { "type": "assertion", "description": "After approximately 2 seconds the button label reverts back to 'Copy'" }
+  ]
+}
