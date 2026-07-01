@@ -5,6 +5,7 @@ import ReviewReport from './components/ReviewReport.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AIProviderSelect from './components/AIProviderSelect.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
+import BatchReview from './pages/BatchReview.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
@@ -116,6 +117,12 @@ function HomePage() {
                 </span>
               )}
             </button>
+            <button
+              onClick={() => navigate('/batch')}
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
+            >
+              Batch Review
+            </button>
           </nav>
         </div>
       </header>
@@ -197,6 +204,7 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/review/:id" element={<ReviewPage />} />
+      <Route path="/batch" element={<BatchReview />} />
     </Routes>
   )
 }
@@ -231,6 +239,12 @@ function DashboardPage() {
                 </span>
               )}
             </span>
+            <a
+              href="/batch"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
+            >
+              Batch Review
+            </a>
           </nav>
         </div>
       </header>
