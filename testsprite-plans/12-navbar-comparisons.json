@@ -1,0 +1,25 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter12 — Unified Navbar + Comparisons page",
+  "description": "Verify the unified Navbar appears on all pages with correct active highlighting, all nav links work, and the /comparisons page renders correctly.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/" },
+    { "type": "assertion", "description": "The navbar is visible with links: Review, History, Batch, Compare, Comparisons" },
+    { "type": "assertion", "description": "The 'Review' link appears highlighted/active (indigo background)" },
+    { "type": "action", "description": "Click the 'History' link in the navbar" },
+    { "type": "assertion", "description": "The URL changes to /dashboard and the 'History' link appears active" },
+    { "type": "action", "description": "Click the 'Batch' link in the navbar" },
+    { "type": "assertion", "description": "The URL changes to /batch and the page heading 'Batch Review' is visible" },
+    { "type": "action", "description": "Click the 'Compare' link in the navbar" },
+    { "type": "assertion", "description": "The URL changes to /compare and the page heading 'Compare Two PRs' is visible" },
+    { "type": "action", "description": "Click the 'Comparisons' link in the navbar" },
+    { "type": "assertion", "description": "The URL changes to /comparisons" },
+    { "type": "assertion", "description": "The heading 'Saved Comparisons' is visible on the page" },
+    { "type": "assertion", "description": "Either a comparisons table or the empty state message 'No comparisons saved yet' is visible" },
+    { "type": "assertion", "description": "A '+ New Comparison' button is visible on the page" },
+    { "type": "action", "description": "Navigate back to https://ai-pr-reviewer-snowy.vercel.app/" },
+    { "type": "assertion", "description": "The navbar is still visible with all links intact" }
+  ]
+}
