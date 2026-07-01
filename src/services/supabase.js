@@ -51,6 +51,23 @@ export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
 }
 
 /**
+ * Fetches a single review by its UUID.
+ *
+ * @param {string} id - UUID of the review
+ * @returns {Promise<Object|null>} The review row, or null if not found
+ */
+export async function getReviewById(id) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider')
+    .eq('id', id)
+    .single()
+
+  if (error) return null
+  return data
+}
+
+/**
  * Retrieves the 20 most recent reviews from Supabase.
  *
  * @returns {Promise<Array>} Array of review rows, newest first

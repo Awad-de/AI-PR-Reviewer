@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function formatDate(dateStr) {
   if (!dateStr) return '—'
@@ -49,6 +50,7 @@ const FILTERS = [
  */
 export default function Dashboard({ reviews, onSelectReview }) {
   const [filter, setFilter] = useState('all')
+  const navigate = useNavigate()
 
   const filtered = filter === 'all'
     ? reviews
@@ -99,7 +101,8 @@ export default function Dashboard({ reviews, onSelectReview }) {
                 <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">Score</th>
                 <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">Verdict</th>
                 <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">AI Used</th>
-                <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium">Date</th>
+                <th className="pb-3 text-xs uppercase tracking-wider text-gray-500 font-medium pr-4">Date</th>
+                <th className="pb-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800/60">
@@ -108,8 +111,8 @@ export default function Dashboard({ reviews, onSelectReview }) {
                 return (
                   <tr
                     key={review.id}
-                    onClick={() => onSelectReview(review)}
-                    className="hover:bg-gray-800/50 cursor-pointer transition"
+                    onClick={() => navigate(`/review/${review.id}`)}
+                    className="hover:bg-gray-700/40 cursor-pointer transition"
                   >
                     <td className="py-3 pr-4 text-gray-300 font-mono text-xs">
                       {truncate(review.repo_name, 30)}
@@ -140,8 +143,11 @@ export default function Dashboard({ reviews, onSelectReview }) {
                         <span className="text-gray-600 text-xs">—</span>
                       )}
                     </td>
-                    <td className="py-3 text-gray-400 whitespace-nowrap">
+                    <td className="py-3 pr-4 text-gray-400 whitespace-nowrap">
                       {formatDate(review.created_at)}
+                    </td>
+                    <td className="py-3 text-gray-600 text-base">
+                      🔗
                     </td>
                   </tr>
                 )

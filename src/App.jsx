@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import PRInput from './components/PRInput.jsx'
 import ReviewReport from './components/ReviewReport.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AIProviderSelect from './components/AIProviderSelect.jsx'
+import ReviewPage from './pages/ReviewPage.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
 import { saveReview, getReviewHistory } from './services/supabase.js'
 
-export default function App() {
+function HomePage() {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [review, setReview] = useState(null)
@@ -16,6 +19,7 @@ export default function App() {
   const [history, setHistory] = useState([])
   const [activeTab, setActiveTab] = useState('review')
   const [provider, setProvider] = useState('openai')
+  const [toast, setToast] = useState(null)
 
   useEffect(() => {
     loadHistory()
@@ -29,6 +33,7 @@ export default function App() {
   async function handleAnalyze(url) {
     setIsLoading(true)
     setError(null)
+    setToast(null)
 
     try {
       const fetchedPR = await fetchPRData(url)
@@ -38,12 +43,17 @@ export default function App() {
           ? await reviewWithOpenAI(fetchedPR)
           : await reviewWithGemini(fetchedPR)
 
-      await saveReview(fetchedPR, reviewResult, provider)
+      const saved = await saveReview(fetchedPR, reviewResult, provider)
 
       setPrData(fetchedPR)
-      setReview({ ...reviewResult, ai_provider: provider })
+      setReview({ ...reviewResult, ai_provider: provider, id: saved?.id })
       setActiveTab('review')
       await loadHistory()
+
+      if (saved?.id) {
+        setToast(saved.id)
+        setTimeout(() => setToast(null), 6000)
+      }
     } catch (err) {
       setError(err.message || 'An unexpected error occurred.')
     } finally {
@@ -51,14 +61,27 @@ export default function App() {
     }
   }
 
-  function handleSelectReview(selectedReview) {
-    setReview(selectedReview)
-    setPrData(null)
-    setActiveTab('review')
-  }
-
   return (
     <div className="min-h-screen bg-gray-950 text-white">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 shadow-xl text-sm">
+          <span className="text-green-400 font-medium">✅ Review saved!</span>
+          <button
+            onClick={() => navigate(`/review/${toast}`)}
+            className="text-indigo-400 hover:text-indigo-300 underline transition"
+          >
+            View at /review/{toast.slice(0, 8)}…
+          </button>
+          <button
+            onClick={() => setToast(null)}
+            className="ml-1 text-gray-500 hover:text-gray-300 transition"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Top bar */}
       <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -79,7 +102,7 @@ export default function App() {
               Review
             </button>
             <button
-              onClick={() => setActiveTab('history')}
+              onClick={() => { setActiveTab('history'); navigate('/dashboard') }}
               className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
                 activeTab === 'history'
                   ? 'bg-indigo-600 text-white'
@@ -160,9 +183,62 @@ export default function App() {
         {activeTab === 'history' && (
           <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
             <h2 className="text-base font-semibold text-gray-300 mb-6">Review History</h2>
-            <Dashboard reviews={history} onSelectReview={handleSelectReview} />
+            <Dashboard reviews={history} onSelectReview={() => {}} />
           </section>
         )}
+      </main>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/review/:id" element={<ReviewPage />} />
+    </Routes>
+  )
+}
+
+function DashboardPage() {
+  const [history, setHistory] = useState([])
+
+  useEffect(() => {
+    getReviewHistory().then(setHistory)
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white">
+      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔍</span>
+            <span className="font-bold text-white text-lg tracking-tight">AI PR Reviewer</span>
+          </div>
+          <nav className="flex gap-1">
+            <a
+              href="/"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition"
+            >
+              Review
+            </a>
+            <span className="px-4 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 text-white">
+              History
+              {history.length > 0 && (
+                <span className="ml-1.5 bg-indigo-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                  {history.length}
+                </span>
+              )}
+            </span>
+          </nav>
+        </div>
+      </header>
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <h2 className="text-base font-semibold text-gray-300 mb-6">Review History</h2>
+          <Dashboard reviews={history} onSelectReview={() => {}} />
+        </section>
       </main>
     </div>
   )
