@@ -24,7 +24,7 @@ export default function Navbar() {
           onClick={() => navigate('/')}
           className="flex items-center gap-2 shrink-0 mr-2"
         >
-          <span className="text-xl">🔍</span>
+          <img src="/logo.png" alt="AI PR Reviewer" className="h-8 w-8 rounded-xl object-cover" />
           <span className="font-bold text-white text-base tracking-tight hidden sm:block">
             AI PR Reviewer
           </span>
