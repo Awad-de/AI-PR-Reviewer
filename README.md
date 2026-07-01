@@ -1,12 +1,17 @@
-# AI PR Reviewer
+# 🔍 AI PR Reviewer
+
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://ai-pr-reviewer-snowy.vercel.app)
+[![CI](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml/badge.svg)](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml)
+[![TestSprite](https://img.shields.io/badge/TestSprite-16%20tests%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
+[![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://react.dev)
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS, OpenAI GPT-4o / Gemini 2.0 Flash, and Supabase — developed iteratively with a full **write → deploy → verify → fix → verify** loop using the TestSprite CLI.
 
-**Live URL:** https://ai-pr-reviewer-snowy.vercel.app
-
-**Repo:** https://github.com/Awad-de/AI-PR-Reviewer
-
-**TestSprite Project:** 16 iterations · 16 test runs · all passing
+🌐 **Live:** https://ai-pr-reviewer-snowy.vercel.app  
+📦 **Repo:** https://github.com/Awad-de/AI-PR-Reviewer  
+🧪 **TestSprite Dashboard:** https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c  
+📋 **Loop Log:** [LOOP.md](./LOOP.md) — 16 iterations · 16 test runs · all passing
 
 ---
 
