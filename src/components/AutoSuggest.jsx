@@ -102,7 +102,8 @@ function SuggestionCard({ suggestion, index }) {
  * @param {{ suggestions: Array }} props
  */
 export default function AutoSuggest({ suggestions }) {
-  const list = Array.isArray(suggestions) ? suggestions : []
+  const raw = suggestions
+  const list = Array.isArray(raw) ? raw : []
 
   return (
     <div className="space-y-4">
@@ -114,6 +115,10 @@ export default function AutoSuggest({ suggestions }) {
             {list.length} fix{list.length !== 1 ? 'es' : ''}
           </span>
         )}
+        {/* debug: remove after confirming */}
+        <span className="text-xs text-gray-700 font-mono ml-2">
+          ({raw === undefined ? 'undefined' : raw === null ? 'null' : `array[${list.length}]`})
+        </span>
       </h3>
 
       {list.length === 0 ? (
