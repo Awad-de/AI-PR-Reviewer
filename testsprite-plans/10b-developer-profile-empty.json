@@ -1,0 +1,14 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter10 — Developer Profile empty state for unknown user",
+  "description": "Verify that navigating directly to /developer/:username for a username with no reviews shows the empty state message.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/developer/nonexistent-user-xyz-99999" },
+    { "type": "assertion", "description": "The page loads without a white screen or crash — the AI PR Reviewer header is visible" },
+    { "type": "assertion", "description": "An avatar image is visible even though the user has no reviews (GitHub always returns an avatar URL)" },
+    { "type": "assertion", "description": "Stat cards section is visible on the page" },
+    { "type": "assertion", "description": "The message 'No reviews found for @nonexistent-user-xyz-99999' is visible" }
+  ]
+}

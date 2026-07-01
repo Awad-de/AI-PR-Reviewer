@@ -155,84 +155,86 @@ export default function DeveloperPage() {
               </div>
             </section>
 
+            {/* Score History Chart — always visible */}
+            <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Score History</h2>
+              {reviews.length === 0 ? (
+                <p className="text-gray-600 text-sm py-6 text-center">No data yet — analyze a PR by @{username} to populate this chart.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} />
+                    <YAxis domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 11 }} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
+                      labelStyle={{ color: '#d1d5db' }}
+                      itemStyle={{ color: '#34d399' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#34d399"
+                      strokeWidth={2}
+                      dot={{ fill: '#34d399', r: 4 }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </section>
+
+            {/* Reviews table or empty state */}
             {reviews.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+              <div className="flex flex-col items-center justify-center py-16 text-gray-500">
                 <p className="text-5xl mb-4">👤</p>
                 <p className="text-base">No reviews found for @{username}</p>
                 <p className="text-sm mt-1">Analyze a PR authored by this user to populate their profile.</p>
               </div>
             ) : (
-              <>
-                {/* Score History Chart */}
-                <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                  <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Score History</h2>
-                  <ResponsiveContainer width="100%" height={220}>
-                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} />
-                      <YAxis domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 11 }} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
-                        labelStyle={{ color: '#d1d5db' }}
-                        itemStyle={{ color: '#34d399' }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="score"
-                        stroke="#34d399"
-                        strokeWidth={2}
-                        dot={{ fill: '#34d399', r: 4 }}
-                        activeDot={{ r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </section>
-
-                {/* Reviews table */}
-                <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                  <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Reviews</h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
-                          <th className="pb-3 text-left font-medium">PR</th>
-                          <th className="pb-3 text-left font-medium">Repo</th>
-                          <th className="pb-3 text-left font-medium">Score</th>
-                          <th className="pb-3 text-left font-medium">Verdict</th>
-                          <th className="pb-3 text-left font-medium">Date</th>
-                          <th className="pb-3"></th>
+              <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Reviews</h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+                        <th className="pb-3 text-left font-medium">PR</th>
+                        <th className="pb-3 text-left font-medium">Repo</th>
+                        <th className="pb-3 text-left font-medium">Score</th>
+                        <th className="pb-3 text-left font-medium">Verdict</th>
+                        <th className="pb-3 text-left font-medium">Date</th>
+                        <th className="pb-3"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-800">
+                      {[...reviews].reverse().map((review) => (
+                        <tr
+                          key={review.id}
+                          onClick={() => navigate(`/review/${review.id}`)}
+                          className="hover:bg-gray-800/40 cursor-pointer transition"
+                        >
+                          <td className="py-3 pr-4 max-w-[200px] truncate text-gray-200">
+                            {review.pr_title || review.pr_url}
+                          </td>
+                          <td className="py-3 pr-4 text-gray-400 text-xs">{review.repo_name}</td>
+                          <td className="py-3 pr-4">
+                            <span className={`font-semibold ${scoreColor(review.score)}`}>
+                              {review.score}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-4">
+                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${verdictBadge(review.verdict)}`}>
+                              {review.verdict?.replace('_', ' ')}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-4 text-gray-500 text-xs">{formatDate(review.created_at)}</td>
+                          <td className="py-3 text-gray-600 text-base">🔗</td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-800">
-                        {[...reviews].reverse().map((review) => (
-                          <tr
-                            key={review.id}
-                            onClick={() => navigate(`/review/${review.id}`)}
-                            className="hover:bg-gray-800/40 cursor-pointer transition"
-                          >
-                            <td className="py-3 pr-4 max-w-[200px] truncate text-gray-200">
-                              {review.pr_title || review.pr_url}
-                            </td>
-                            <td className="py-3 pr-4 text-gray-400 text-xs">{review.repo_name}</td>
-                            <td className="py-3 pr-4">
-                              <span className={`font-semibold ${scoreColor(review.score)}`}>
-                                {review.score}
-                              </span>
-                            </td>
-                            <td className="py-3 pr-4">
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${verdictBadge(review.verdict)}`}>
-                                {review.verdict?.replace('_', ' ')}
-                              </span>
-                            </td>
-                            <td className="py-3 pr-4 text-gray-500 text-xs">{formatDate(review.created_at)}</td>
-                            <td className="py-3 text-gray-600 text-base">🔗</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-              </>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
             )}
           </>
         )}

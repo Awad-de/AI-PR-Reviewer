@@ -1,0 +1,23 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter10 — Developer Profile Page navigation and content",
+  "description": "Verify that entering a GitHub username in the DeveloperSearch navbar widget navigates to /developer/:username and that the profile page shows the avatar, stats cards, Score History section, and either a reviews table or empty-state message.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to https://ai-pr-reviewer-snowy.vercel.app/" },
+    { "type": "assertion", "description": "The navbar contains a text input with placeholder 'GitHub username…' and a 'View Profile' button" },
+    { "type": "action", "description": "Type 'torvalds' into the GitHub username input in the navbar" },
+    { "type": "action", "description": "Click the 'View Profile' button" },
+    { "type": "assertion", "description": "The page URL now contains /developer/torvalds" },
+    { "type": "assertion", "description": "A circular avatar image is visible on the page (its src URL contains 'torvalds.png' or 'github.com/torvalds')" },
+    { "type": "assertion", "description": "The text '@torvalds' is displayed as the profile heading" },
+    { "type": "assertion", "description": "A 'View on GitHub' link is visible on the page" },
+    { "type": "assertion", "description": "A stat card labeled 'Total PRs Reviewed' is visible" },
+    { "type": "assertion", "description": "A stat card labeled 'Average Score' is visible" },
+    { "type": "assertion", "description": "A stat card labeled 'Approve Rate' is visible" },
+    { "type": "assertion", "description": "A stat card labeled 'Most Recent Review' is visible" },
+    { "type": "assertion", "description": "The heading 'Score History' is visible on the page" },
+    { "type": "assertion", "description": "Either a reviews table with rows is visible OR the message 'No reviews found for @torvalds' is visible" }
+  ]
+}
