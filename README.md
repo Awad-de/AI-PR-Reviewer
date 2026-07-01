@@ -1,4 +1,7 @@
-# 🔍 AI PR Reviewer
+<div align="center">
+  <img src="public/logo.png" width="96" height="96" style="border-radius:20px" alt="AI PR Reviewer Logo" />
+  <h1>AI PR Reviewer</h1>
+</div>
 
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://ai-pr-reviewer-snowy.vercel.app)
 [![CI](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml/badge.svg)](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml)
@@ -199,7 +202,7 @@ src/
 | 12 | Unified Navbar + Comparisons | `42beb976` | ✅ 20/20 |
 | 13 | Delete + Detail + Share Link | `67475cd5` | ✅ 17/17 |
 | 14 | Delete Bug Fix | `8c4acdd4` | ✅ 7/7 |
-| 15 | Polish — Skeleton + Toast + Confetti + StatsBar | `52e098cf` `10f6b888` `acc0114b` | ✅ PASS |
+| 15 | Polish — Skeleton + Toast + Confetti + StatsBar | `163232ae` `52e098cf` `10f6b888` `acc0114b` | ✅ PASS 4/4 |
 | 16 | Live Nav Badges (History + Comparisons) | `b4cd720d` `6952c9fd` | ✅ 13/13 |
 
 Full loop log: [`LOOP.md`](./LOOP.md)
