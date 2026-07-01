@@ -1,0 +1,15 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter18b — Developer profile shows chart and stats for impronunciable",
+  "description": "Since vercel/next.js/pull/1 (by @impronunciable) has been analyzed repeatedly in previous test runs, navigating to /developer/impronunciable should show a populated profile with stat cards showing real numbers, a Score History chart with data points, and a reviews table with at least one row.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /developer/impronunciable" },
+    { "type": "assertion", "description": "Verify the developer profile page loads with a GitHub avatar and @impronunciable username heading" },
+    { "type": "assertion", "description": "Verify the Total PRs Reviewed stat card shows a number greater than 0" },
+    { "type": "assertion", "description": "Verify the Avg Score stat card shows a numeric value, not a dash" },
+    { "type": "assertion", "description": "Verify the Score History section shows a line chart with at least one data point — not the empty-state message 'No data yet'" },
+    { "type": "assertion", "description": "Verify the reviews table below the chart shows at least one review row with a score and verdict" }
+  ]
+}

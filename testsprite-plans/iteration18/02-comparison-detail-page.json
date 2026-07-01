@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter18 — Comparison detail page shows full content at /comparisons/:id",
+  "description": "When a user navigates to a saved comparison detail page via /comparisons/:id, the page renders the Score Comparison Banner, Diff Summary table, and two side-by-side review reports with their scores and verdicts.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /comparisons" },
+    { "type": "assertion", "description": "Verify at least one saved comparison row is visible in the table" },
+    { "type": "action", "description": "Click the View button on the first comparison row" },
+    { "type": "assertion", "description": "Verify the URL changes to /comparisons/:id" },
+    { "type": "assertion", "description": "Verify the Score Comparison Banner is visible showing two numeric scores and a delta indicator" },
+    { "type": "assertion", "description": "Verify the Diff Summary table is visible with category rows showing score changes" },
+    { "type": "assertion", "description": "Verify two side-by-side review report panels are visible, one labeled Old PR and one labeled New PR, each showing a score and verdict" },
+    { "type": "assertion", "description": "Verify the Copy Share Link button is visible and clickable" }
+  ]
+}

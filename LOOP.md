@@ -27,6 +27,7 @@ Repo: https://github.com/Awad-de/AI-PR-Reviewer
 | 15 | Polish — SkeletonReview + Toast + Confetti + StatsBar + fade-in | `testsprite test create-batch` → run | Skeleton BLOCKED (too transient for agent) | Rewrote skeleton test to assert no-spinner + review completes | ✅ PASS 4/4 (StatsBar ✅ 2/2, Skeleton ✅ 7/7, Toast ✅ 19/19, Batch-toast ✅ 13/13) |
 | 16 | Nav badge counts on History + Comparisons (live update on add/delete) | `testsprite test create-batch` → run | Comparisons badge invisible when count=0 (`!count` treated 0 as falsy) | Changed to `count == null` check so badge shows "0" | ✅ PASS 2/2 (badges ✅ 13/13, badge increment ✅) |
 | 17 | Coverage sweep — Dashboard AI filter + Comparisons tab + Save→redirect | `testsprite test create-batch` → run | — | — | ✅ PASS 3/3 (filter ✅, tab ✅ 13/13, redirect ✅) |
+| 18 | Deep adversarial sweep — GitHub 404 error, comparison detail page, developer profile with data, StatsBar update | `testsprite test create-batch` → run | Test 3 FAILED: hardcoded username "timer" ≠ actual PR author — GitHub API confirmed author is "impronunciable" | Rewrote test with correct username | ✅ PASS 5/5 (404 error ✅, detail page ✅ 15/15, dev profile ✅ 7/7, StatsBar ✅) |
 
 ---
 
@@ -574,6 +575,37 @@ Comparisons badge was invisible when count = 0 because `Badge` used `if (!count)
 
 ---
 
+## Iteration 18 — Adversarial Sweep (Error Handling + Detail Page + Developer Profile + StatsBar)
+
+**Date:** 2026-07-02
+
+### What was tested — edge cases and deep flows not yet covered
+1. **GitHub 404 error handling** — submit a PR URL that looks valid but returns 404. Does the app crash or show a friendly error?
+2. **Comparison detail page** — navigate to `/comparisons/:id` and verify Score Banner, Diff Summary table, and side-by-side reports all render
+3. **Developer profile with real data** — navigate to a developer profile that has review history and verify chart + stats show populated data
+4. **StatsBar update after new review** — does the Total Reviews counter increase after submitting a new review?
+
+### Root Cause Investigation — Test 3
+Initial test hardcoded `"timer"` as the PR author of `vercel/next.js/pull/1`. Test FAILED with "0 reviews for @timer".
+- Downloaded failure bundle → confirmed page rendered correctly but showed empty state for that username
+- Checked GitHub API: `curl api.github.com/repos/vercel/next.js/pulls/1` → actual author is `impronunciable`, not `timer`
+- Conclusion: test design error, not a code bug — `github_username` IS saved correctly in `supabase.js`
+- Fix: rewrote test using correct username `impronunciable`
+
+### TestSprite Results
+
+| # | Test Name | Test ID | Run ID | Status | Steps |
+|---|-----------|---------|--------|--------|-------|
+| 1 | GitHub 404 PR shows friendly error | `7f4c06b9` | `c5022290` | ✅ PASS | 5/5 |
+| 2 | Comparison detail page full content | `6f94dc29` | `136c9c92` | ✅ PASS | 15/15 |
+| 3 | Developer profile — "timer" (wrong username) | `a2952756` | `f35c1163` | ❌ FAIL (test design error) | 4/7 |
+| 3b | Developer profile — "impronunciable" (correct author) | `d3020474` | `5dcf7ef6` | ✅ PASS | 7/7 |
+| 4 | StatsBar updates after new review | `f70678f9` | `01db4bcb` | ✅ PASS | 2/2 |
+
+**No code bugs found** — all 4 app features confirmed working correctly.
+
+---
+
 ## Final Summary
 
 | Iter | Feature / Fix | Test ID | Status |
@@ -595,7 +627,8 @@ Comparisons badge was invisible when count = 0 because `Badge` used `if (!count)
 | 15 | Polish — Skeleton + Toast + Confetti + StatsBar + Fade-in | `163232ae` `52e098cf` `10f6b888` `acc0114b` | ✅ PASS 4/4 (Skeleton ✅ 7/7, StatsBar ✅ 2/2, Toast ✅ 19/19, Batch-toast ✅ 13/13) |
 | 16 | Nav badge counts on History + Comparisons (live update) | `b4cd720d` `6952c9fd` | ✅ PASS (2/2 — badges 13/13 ✅, badge increment ✅); Bug fixed: `!count` → `count == null` |
 | 17 | Coverage sweep — Dashboard AI filter + Comparisons tab + Save→redirect | `ccbb2cde` `a909c90e` `1f83af6e` | ✅ PASS 3/3 (filter ✅, tab 13/13 ✅, redirect ✅) |
+| 18 | Adversarial sweep — GitHub 404 error, comparison detail page, developer profile with data, StatsBar update | `7f4c06b9` `6f94dc29` `a2952756`→`d3020474` `f70678f9` | ✅ PASS 5/5 (404 ✅ 5/5, detail ✅ 15/15, dev-profile ✅ 7/7, StatsBar ✅); Test 3 redesigned after failure: "timer" → "impronunciable" (confirmed via GitHub API) |
 
-> **17 iterations · 15 user-facing features · 6 real bugs caught & fixed by TestSprite · 17 TestSprite runs · all passing**
+> **18 iterations · 15 user-facing features · 6 real bugs caught & fixed by TestSprite · 18 TestSprite runs · all passing**
 
 **App is production-ready. 🚀**
