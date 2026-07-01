@@ -162,6 +162,8 @@ export default function ComparePage() {
         ai_provider: provider,
       })
       setSaved(true)
+      // Navigate to comparisons page after short delay
+      setTimeout(() => navigate('/comparisons'), 1500)
     } catch (err) {
       setError(`Save failed: ${err.message}`)
     } finally {
@@ -307,7 +309,7 @@ export default function ComparePage() {
                     </svg>
                     Saving…
                   </>
-                ) : saved ? '✅ Saved!' : '💾 Save Comparison'}
+                ) : saved ? '✅ Saved! Redirecting to Comparisons…' : '💾 Save Comparison'}
               </button>
             </div>
           </>

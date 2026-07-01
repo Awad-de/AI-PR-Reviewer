@@ -13,7 +13,7 @@ import ComparisonsPage from './pages/ComparisonsPage.jsx'
 import { fetchPRData } from './services/github.js'
 import { reviewPR as reviewWithGemini } from './services/gemini.js'
 import { reviewPR as reviewWithOpenAI } from './services/openai.js'
-import { saveReview, getReviewHistory } from './services/supabase.js'
+import { saveReview, getReviewHistory, getComparisons } from './services/supabase.js'
 
 function HomePage() {
   const navigate = useNavigate()
@@ -114,28 +114,116 @@ function HomePage() {
   )
 }
 
+function shortUrl(url) {
+  try {
+    const m = url.match(/github\.com\/(.+)\/pull\/(\d+)/)
+    if (m) return `${m[1]}#${m[2]}`
+  } catch {}
+  return url
+}
+
 function DashboardPage() {
+  const navigate = useNavigate()
   const [history, setHistory] = useState([])
+  const [comparisons, setComparisons] = useState([])
+  const [tab, setTab] = useState('reviews')
 
   useEffect(() => {
     getReviewHistory().then(setHistory)
+    getComparisons().then(setComparisons)
   }, [])
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-base font-semibold text-gray-300 mb-6">
-            Review History
+      <main className="max-w-5xl mx-auto px-4 py-8 space-y-4">
+        {/* Tabs */}
+        <div className="flex gap-2 border-b border-gray-800 pb-0">
+          <button
+            onClick={() => setTab('reviews')}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition border-b-2 ${
+              tab === 'reviews'
+                ? 'border-indigo-500 text-white bg-gray-900'
+                : 'border-transparent text-gray-400 hover:text-white'
+            }`}
+          >
+            Reviews
             {history.length > 0 && (
-              <span className="ml-2 bg-gray-700 text-gray-400 text-xs px-2 py-0.5 rounded-full">
-                {history.length}
-              </span>
+              <span className="ml-1.5 bg-gray-700 text-gray-400 text-xs px-1.5 py-0.5 rounded-full">{history.length}</span>
             )}
-          </h2>
-          <Dashboard reviews={history} onSelectReview={() => {}} />
-        </section>
+          </button>
+          <button
+            onClick={() => setTab('comparisons')}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition border-b-2 ${
+              tab === 'comparisons'
+                ? 'border-indigo-500 text-white bg-gray-900'
+                : 'border-transparent text-gray-400 hover:text-white'
+            }`}
+          >
+            Comparisons
+            {comparisons.length > 0 && (
+              <span className="ml-1.5 bg-gray-700 text-gray-400 text-xs px-1.5 py-0.5 rounded-full">{comparisons.length}</span>
+            )}
+          </button>
+        </div>
+
+        {tab === 'reviews' && (
+          <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+            <Dashboard reviews={history} onSelectReview={() => {}} />
+          </section>
+        )}
+
+        {tab === 'comparisons' && (
+          <section className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+            {comparisons.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-gray-600">
+                <p className="text-4xl mb-3">⚖️</p>
+                <p className="text-sm">No comparisons saved yet.</p>
+                <button
+                  onClick={() => navigate('/compare')}
+                  className="mt-4 px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition"
+                >
+                  Compare PRs now
+                </button>
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+                    <th className="px-5 py-3 text-left font-medium">Old PR</th>
+                    <th className="px-5 py-3 text-left font-medium">New PR</th>
+                    <th className="px-5 py-3 text-center font-medium text-red-400">Old</th>
+                    <th className="px-5 py-3 text-center font-medium text-green-400">New</th>
+                    <th className="px-5 py-3 text-center font-medium">Delta</th>
+                    <th className="px-5 py-3 text-left font-medium">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-800">
+                  {comparisons.map((c) => {
+                    const delta = c.score_delta
+                    const dCls = delta > 0 ? 'text-green-400' : delta < 0 ? 'text-red-400' : 'text-gray-500'
+                    return (
+                      <tr key={c.id} className="hover:bg-gray-800/40 transition">
+                        <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.old_pr_url)}</td>
+                        <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.new_pr_url)}</td>
+                        <td className="px-5 py-3 text-center font-bold text-red-400">{c.old_score}</td>
+                        <td className="px-5 py-3 text-center font-bold text-green-400">{c.new_score}</td>
+                        <td className="px-5 py-3 text-center">
+                          <span className={`font-semibold ${dCls}`}>
+                            {delta > 0 ? '+' : ''}{delta} {delta > 0 ? '↑' : delta < 0 ? '↓' : '—'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3 text-gray-500 text-xs">
+                          {new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
+          </section>
+        )}
       </main>
     </div>
   )
