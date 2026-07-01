@@ -23,11 +23,20 @@ Return this exact JSON structure:
   "performance_issues": ["<issue description>", ...] or [],
   "clarity_issues": ["<issue description>", ...] or [],
   "positives": ["<positive point>", ...],
-  "copy_comments": ["<ready-to-paste GitHub comment>", ...]
+  "copy_comments": ["<ready-to-paste GitHub comment>", ...],
+  "suggestions": [
+    {
+      "issue": "<short title of the problem>",
+      "broken_code": "<the actual problematic code snippet from the diff, max 10 lines>",
+      "fixed_code": "<the corrected version of that code, max 10 lines>",
+      "explanation": "<one sentence why this fix works>"
+    }
+  ]
 }
 
 Score guide: 90-100=excellent, 70-89=good, 50-69=needs work, below 50=major issues.
-copy_comments should be 2-3 ready-to-use review comments the user can paste directly on GitHub.`
+copy_comments should be 2-3 ready-to-use review comments the user can paste directly on GitHub.
+suggestions: for each concrete issue found (bugs, security, performance, clarity), provide a code fix. If the diff does not contain clear fixable code snippets, return an empty suggestions array.`
 }
 
 function cleanResponseText(text) {
@@ -55,7 +64,7 @@ async function callOpenAI(prompt) {
         model: OPENAI_MODEL,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.2,
-        max_tokens: 2048,
+        max_tokens: 4096,
       }),
     })
 

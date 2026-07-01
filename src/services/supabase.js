@@ -39,6 +39,7 @@ export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
       positives: reviewResult.positives,
       copy_comments: reviewResult.copy_comments,
       ai_provider: aiProvider,
+      suggestions: reviewResult.suggestions ?? [],
     })
     .select()
     .single()
@@ -59,7 +60,7 @@ export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
 export async function getReviewById(id) {
   const { data, error } = await supabase
     .from('reviews')
-    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider')
+    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider, suggestions')
     .eq('id', id)
     .single()
 
@@ -75,7 +76,7 @@ export async function getReviewById(id) {
 export async function getReviewHistory() {
   const { data, error } = await supabase
     .from('reviews')
-    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider')
+    .select('id, created_at, pr_url, pr_title, pr_author, repo_name, score, verdict, summary, bugs, security_issues, performance_issues, clarity_issues, positives, copy_comments, ai_provider, suggestions')
     .order('created_at', { ascending: false })
     .limit(20)
 

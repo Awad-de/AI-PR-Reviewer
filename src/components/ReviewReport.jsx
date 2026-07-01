@@ -2,6 +2,7 @@ import ScoreBar from './ScoreBar.jsx'
 import MergeVerdict from './MergeVerdict.jsx'
 import ReviewCard from './ReviewCard.jsx'
 import CopyComments from './CopyComments.jsx'
+import AutoSuggest from './AutoSuggest.jsx'
 
 const PROVIDER_BADGE = {
   openai: {
@@ -81,6 +82,9 @@ export default function ReviewReport({ prData, review }) {
       {review.copy_comments?.length > 0 && (
         <CopyComments comments={review.copy_comments} />
       )}
+
+      {/* Auto-suggested Fixes */}
+      <AutoSuggest suggestions={review.suggestions} />
     </div>
   )
 }
