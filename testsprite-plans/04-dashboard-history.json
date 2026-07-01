@@ -1,0 +1,15 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "History tab shows past reviews from Supabase in a table",
+  "description": "After at least one PR has been analyzed, switching to the History tab shows a table of past reviews with repo name, PR title, score, verdict badge, and date columns.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "action", "description": "Click the History tab button in the top navigation" },
+    { "type": "assertion", "description": "The History tab becomes active and a table or list of past reviews is visible, or an empty state message 'No reviews yet' is shown if no reviews exist" },
+    { "type": "assertion", "description": "If reviews exist, each row shows a repository name, a PR title truncated to fit, a colored score number, a verdict badge, and a formatted date" },
+    { "type": "action", "description": "Click the Review tab to switch back" },
+    { "type": "assertion", "description": "The Review tab becomes active and the PR input form is visible again" }
+  ]
+}
