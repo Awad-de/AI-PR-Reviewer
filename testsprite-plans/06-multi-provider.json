@@ -1,0 +1,20 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Multi-provider selection shows correct AI badge in review and dashboard",
+  "description": "When a user selects OpenAI or Gemini before analyzing a PR, the review report shows the matching provider badge and the History tab shows the correct badge in the AI Used column with working filter buttons.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "assertion", "description": "Two provider buttons are visible: '🤖 OpenAI GPT-4o' and '✨ Gemini Flash', with OpenAI highlighted as the default selection" },
+    { "type": "action", "description": "Click the '🤖 OpenAI GPT-4o' button to ensure it is selected" },
+    { "type": "action", "description": "Paste 'https://github.com/vercel/next.js/pull/1' into the PR URL input and click Analyze PR" },
+    { "type": "action", "description": "Wait for the review report to fully load" },
+    { "type": "assertion", "description": "The review report card shows a '🤖 GPT-4o' badge in blue next to the PR title" },
+    { "type": "action", "description": "Click the History tab" },
+    { "type": "assertion", "description": "The history table has an 'AI Used' column and the most recent row shows a '🤖 GPT-4o' blue badge" },
+    { "type": "assertion", "description": "Filter buttons 'All', '🤖 OpenAI', and '✨ Gemini' are visible above the table" },
+    { "type": "action", "description": "Click the '🤖 OpenAI' filter button" },
+    { "type": "assertion", "description": "The table updates to show only rows with the GPT-4o badge; rows with Gemini badge are hidden" }
+  ]
+}

@@ -13,6 +13,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
  * @param {string} aiProvider - 'openai' or 'gemini'
  * @returns {Promise<Object>} The inserted row
  */
+const VALID_VERDICTS = ['APPROVE', 'REQUEST_CHANGES', 'NEEDS_DISCUSSION']
+
+function normalizeVerdict(verdict) {
+  if (!verdict) return 'NEEDS_DISCUSSION'
+  const upper = verdict.toUpperCase().replace(/\s+/g, '_')
+  return VALID_VERDICTS.includes(upper) ? upper : 'NEEDS_DISCUSSION'
+}
+
 export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
   const { data, error } = await supabase
     .from('reviews')
@@ -22,7 +30,7 @@ export async function saveReview(prData, reviewResult, aiProvider = 'openai') {
       pr_author: prData.pr_author,
       repo_name: prData.repo_name,
       score: reviewResult.score,
-      verdict: reviewResult.verdict,
+      verdict: normalizeVerdict(reviewResult.verdict),
       summary: reviewResult.summary,
       bugs: reviewResult.bugs,
       security_issues: reviewResult.security_issues,
