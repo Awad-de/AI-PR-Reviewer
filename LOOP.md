@@ -317,7 +317,16 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_verdict_check;
 **Errors Found:** None in the feature itself — TestSprite blocked on either/or assertion scoring
 **Fix Applied:** Simplified test to remove conditional steps
 
-**Result:** ✅ PASS — confirmed by test agent 3/3 times (quality score, verdict, Auto-suggest section all verified)
+**Additional verification run with OWASP NodeGoat PR #300** (contains `eval(req.body.preTax)` and XSS vulnerabilities):
+- Test ID: `a2a0a890`
+- Fix 1: async/await clipboard pattern (matching CopyComments which was already proven)
+- Fix 2: discovered the bug — `setCopied(true)` was called outside the async context
+
+**Final Result:** ✅ PASS — 7/7 steps with OWASP security PR
+- Score below 85, security issues detected ✅
+- Fix cards with ❌ Current Code / ✅ Fixed Code visible ✅
+- Copy Fix button shows "Copied ✓" on click ✅
+- 💡 explanation text visible ✅
 
 ---
 
@@ -333,6 +342,6 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_verdict_check;
 | 6 | Multi-Provider AI | `f158a268` | ✅ PASS (19/19 steps) |
 | 7 | Shareable Review Page | `5ed09e9b` | ✅ PASS (23/23 steps) |
 | 8 | Batch Review | `24362a21` | ✅ PASS (15/15 steps) |
-| 9 | Auto-suggest Fix | `40fedd18` | ✅ PASS — confirmed by test agent (section renders, both states handled) |
+| 9 | Auto-suggest Fix | `a2a0a890` | ✅ PASS (7/7 steps — OWASP PR with eval/XSS, fix cards + Copy Fix verified) |
 
 **All 9 features verified. App is production-ready. 🚀**
