@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { deleteReview } from '../services/supabase.js'
 
@@ -51,11 +51,15 @@ export default function Dashboard({ reviews: initialReviews, onSelectReview }) {
   const [filter, setFilter] = useState('all')
   const [deleting, setDeleting] = useState(null)
   const navigate = useNavigate()
+  const prevLengthRef = useRef(initialReviews.length)
 
-  // keep in sync if parent re-renders with new reviews
-  if (initialReviews !== reviews && initialReviews.length !== reviews.length) {
-    setReviews(initialReviews)
-  }
+  // Sync only when parent adds new reviews (length increases), not on local deletes
+  useEffect(() => {
+    if (initialReviews.length > prevLengthRef.current) {
+      setReviews(initialReviews)
+    }
+    prevLengthRef.current = initialReviews.length
+  }, [initialReviews])
 
   const filtered = filter === 'all'
     ? reviews
