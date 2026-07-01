@@ -26,6 +26,7 @@ Repo: https://github.com/Awad-de/AI-PR-Reviewer
 | 14 | Delete bug: row reappeared after confirm | `testsprite test create` → run | PASS — confirmed bug was real: sync guard in render reset state after every delete | Replaced broken `if` in render body with `useEffect` that only syncs on parent add, not local delete | ✅ PASS 7/7 |
 | 15 | Polish — SkeletonReview + Toast + Confetti + StatsBar + fade-in | `testsprite test create-batch` → run | Skeleton BLOCKED (too transient for agent) | Rewrote skeleton test to assert no-spinner + review completes | ✅ PASS 4/4 (StatsBar ✅ 2/2, Skeleton ✅ 7/7, Toast ✅ 19/19, Batch-toast ✅ 13/13) |
 | 16 | Nav badge counts on History + Comparisons (live update on add/delete) | `testsprite test create-batch` → run | Comparisons badge invisible when count=0 (`!count` treated 0 as falsy) | Changed to `count == null` check so badge shows "0" | ✅ PASS 2/2 (badges ✅ 13/13, badge increment ✅) |
+| 17 | Coverage sweep — Dashboard AI filter + Comparisons tab + Save→redirect | `testsprite test create-batch` → run | — | — | ✅ PASS 3/3 (filter ✅, tab ✅ 13/13, redirect ✅) |
 
 ---
 
@@ -492,6 +493,28 @@ Replaced the inline `if` with a `useEffect` that only syncs when the parent **ad
 
 ---
 
+## Iteration 17 — Coverage Sweep (Dashboard Filter + Comparisons Tab + Save→Redirect)
+
+**Date:** 2026-07-02
+
+### What was tested
+Three previously untested user flows:
+1. **Dashboard AI provider filter** — clicking Gemini/OpenAI filter shows only matching reviews; All restores full list
+2. **Dashboard Comparisons tab** — switching from Reviews tab to Comparisons tab inside /dashboard renders content correctly
+3. **Save Comparison → redirect** — after comparing two PRs and clicking Save, app redirects to /comparisons and new row appears
+
+### TestSprite Results
+
+| # | Test Name | Test ID | Run ID | Status | Steps |
+|---|-----------|---------|--------|--------|-------|
+| 1 | Dashboard AI provider filter | `ccbb2cde` | `acb796eb` | ✅ PASS | — |
+| 2 | Dashboard Comparisons tab | `a909c90e` | `353d1613` | ✅ PASS | 13/13 |
+| 3 | Save Comparison → /comparisons redirect | `1f83af6e` | `95fd52a7` | ✅ PASS | — |
+
+**No bugs found** — all 3 flows confirmed working. App coverage expanded to 17 verified areas.
+
+---
+
 ## Iteration 15 — Polish (Skeleton Loading + Toast + Confetti + StatsBar + Fade-in)
 
 **Code Written:**
@@ -571,7 +594,8 @@ Comparisons badge was invisible when count = 0 because `Badge` used `if (!count)
 | 14 | 🐛 Bug fix — deleted review reappeared in Dashboard | `8c4acdd4` | ✅ PASS (7/7 steps) |
 | 15 | Polish — Skeleton + Toast + Confetti + StatsBar + Fade-in | `163232ae` `52e098cf` `10f6b888` `acc0114b` | ✅ PASS 4/4 (Skeleton ✅ 7/7, StatsBar ✅ 2/2, Toast ✅ 19/19, Batch-toast ✅ 13/13) |
 | 16 | Nav badge counts on History + Comparisons (live update) | `b4cd720d` `6952c9fd` | ✅ PASS (2/2 — badges 13/13 ✅, badge increment ✅); Bug fixed: `!count` → `count == null` |
+| 17 | Coverage sweep — Dashboard AI filter + Comparisons tab + Save→redirect | `ccbb2cde` `a909c90e` `1f83af6e` | ✅ PASS 3/3 (filter ✅, tab 13/13 ✅, redirect ✅) |
 
-> **16 iterations · 15 user-facing features · 1 bug fix · 16 TestSprite runs · all passing**
+> **17 iterations · 15 user-facing features · 6 real bugs caught & fixed by TestSprite · 17 TestSprite runs · all passing**
 
 **App is production-ready. 🚀**

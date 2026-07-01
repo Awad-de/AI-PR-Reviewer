@@ -1,0 +1,18 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter17 — Dashboard AI provider filter shows matching reviews only",
+  "description": "When a user clicks the Gemini or OpenAI filter button in the History table, only reviews matching that provider are shown. Clicking All restores the full list.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "assertion", "description": "Verify the reviews history table is visible with at least one row" },
+    { "type": "assertion", "description": "Verify filter buttons labeled All, OpenAI, and Gemini are visible above the table" },
+    { "type": "action", "description": "Click the Gemini filter button" },
+    { "type": "assertion", "description": "Verify the table shows only rows with a Gemini provider badge, or an empty-state message if no Gemini reviews exist — no OpenAI-badged rows should be visible" },
+    { "type": "action", "description": "Click the OpenAI filter button" },
+    { "type": "assertion", "description": "Verify the table shows only rows with an OpenAI provider badge, or an empty-state message if no OpenAI reviews exist — no Gemini-badged rows should be visible" },
+    { "type": "action", "description": "Click the All filter button" },
+    { "type": "assertion", "description": "Verify the reviews table is restored and shows all rows again including both provider types" }
+  ]
+}

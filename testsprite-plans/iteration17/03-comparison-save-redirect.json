@@ -1,0 +1,20 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter17 — Save Comparison redirects to /comparisons and shows new row",
+  "description": "After comparing two PRs on /compare and clicking Save Comparison, the app redirects to /comparisons and the newly saved comparison appears as a row in the table.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /compare" },
+    { "type": "assertion", "description": "Verify the Old PR and New PR input fields are visible" },
+    { "type": "action", "description": "Type https://github.com/vercel/next.js/pull/1 into the Old PR input field" },
+    { "type": "action", "description": "Type https://github.com/vercel/next.js/pull/2 into the New PR input field" },
+    { "type": "action", "description": "Click the Compare PRs button" },
+    { "type": "assertion", "description": "Verify a loading indicator appears while both PRs are being analyzed" },
+    { "type": "assertion", "description": "Verify the Score Comparison Banner appears showing two scores and a delta arrow after analysis completes" },
+    { "type": "assertion", "description": "Verify the Save Comparison button is visible below the results" },
+    { "type": "action", "description": "Click the Save Comparison button" },
+    { "type": "assertion", "description": "Verify the page redirects to /comparisons and the URL in the browser changes to /comparisons" },
+    { "type": "assertion", "description": "Verify the /comparisons page shows a table row for the newly saved comparison with the two PR URLs and score delta" }
+  ]
+}

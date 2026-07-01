@@ -1,0 +1,16 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter17 — Dashboard Comparisons tab renders content and badge count",
+  "description": "When a user clicks the Comparisons tab inside the Dashboard page, the comparisons table or empty state is shown. The tab button has a live badge count. Switching back to Reviews tab shows the reviews table again.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "assertion", "description": "Verify the Reviews tab is active by default and the reviews history table is visible" },
+    { "type": "assertion", "description": "Verify the Comparisons tab button is visible and has a numeric badge showing its count" },
+    { "type": "action", "description": "Click the Comparisons tab button" },
+    { "type": "assertion", "description": "Verify the comparisons section is now visible in the main content area, showing either a table of saved comparisons or a clear empty-state message — not the reviews table" },
+    { "type": "action", "description": "Click the Reviews tab button" },
+    { "type": "assertion", "description": "Verify the reviews history table is visible again and the Comparisons content is no longer shown" }
+  ]
+}
