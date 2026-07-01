@@ -405,6 +405,69 @@ CREATE TABLE IF NOT EXISTS comparisons (
 
 ---
 
+## Iteration 12 — Unified Navbar + Comparisons Page
+
+**Date:** 2026-07-01
+
+### Changes Made
+- `src/components/Navbar.jsx` — new shared navbar component with active-link highlighting and horizontal scroll for overflow; replaces all duplicated inline headers across every page
+- `src/pages/ComparisonsPage.jsx` — new page at `/comparisons` showing saved comparisons table with delta colors, "+ New Comparison" button, and empty state
+- `src/App.jsx` — removed duplicated nav markup; all pages now use `<Navbar />`; added `/comparisons` route; `DashboardPage` has "Reviews" + "Comparisons" tabs; after save in `/compare` → redirects to `/comparisons`
+- `src/pages/BatchReview.jsx`, `DeveloperPage.jsx`, `ComparePage.jsx`, `ReviewPage.jsx` — replaced inline headers with `<Navbar />`
+
+### TestSprite Results
+
+**Test — Unified Navbar + Comparisons page**
+- Run ID: `c46ce41a-f049-4fd3-9c97-dc688d9f94be`
+- Test ID: `42beb976-ae4d-44a8-8813-f14bceef61bf`
+- Status: ✅ PASS
+- Steps: 20/20 (passed=20, failed=0)
+- Verified: Navbar on all pages with active link ✅, all nav links navigate correctly ✅, `/comparisons` page loads ✅, "+ New Comparison" button ✅
+
+---
+
+## Iteration 13 — Delete Buttons + Comparison Detail Page + Share Link
+
+**Date:** 2026-07-01
+
+### Changes Made
+- `src/services/supabase.js` — added `deleteReview(id)`, `getComparisonById(id)`, `deleteComparison(id)`
+- `src/pages/ComparisonsPage.jsx` — "🔗 View" and "🗑️" delete button per row
+- `src/pages/ComparisonDetailPage.jsx` — new `/comparisons/:id` page with Score Banner, Diff Summary, side-by-side ReviewReports, "🔗 Copy Share Link"
+- `src/App.jsx` — added `/comparisons/:id` route
+- `src/components/Dashboard.jsx` — added "🔗" and "🗑️" action buttons per review row
+
+### Supabase Required
+```sql
+CREATE POLICY "Allow delete" ON reviews FOR DELETE USING (true);
+CREATE POLICY "Allow delete" ON comparisons FOR DELETE USING (true);
+```
+
+### TestSprite Results
+- Run ID: `cd5fc9a6-12b5-4f71-a0e2-f5339bb64df5`
+- Test ID: `67475cd5-9340-4595-80bb-c11350b4726f`
+- Status: ✅ PASS — Steps: 17/17
+
+---
+
+## Iteration 14 — Delete Bug Fix (Row Reappearing After Confirm)
+
+**Date:** 2026-07-01
+
+### Root Cause
+`Dashboard.jsx` had a broken sync guard in the render body that called `setReviews(initialReviews)` whenever `initialReviews.length !== reviews.length` — which is always true right after a delete (parent hasn't reloaded yet), so it reset the local state and brought the deleted row back.
+
+### Fix
+Replaced the inline `if` with a `useEffect` that only syncs when the parent **adds** reviews (length increases), not when the user deletes locally.
+
+### TestSprite Results
+- Run ID: `e8bd35b8-0cb9-4a8b-9381-e1eeaf3bc0bb`
+- Test ID: `8c4acdd4-a270-4a86-8078-d37c5a63e4f5`
+- Status: ✅ PASS — Steps: 7/7
+- Verified: row disappears after confirm ✅, does NOT reappear ✅
+
+---
+
 ## Final Summary
 
 | # | Feature | Test ID | Status |
