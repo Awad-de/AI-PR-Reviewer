@@ -1,0 +1,58 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "name": "Iteration 21 — Dashboard pagination shows reviews beyond page 1",
+  "type": "frontend",
+  "specs": [
+    {
+      "type": "frontend",
+      "name": "Dashboard pagination controls appear and navigate correctly",
+      "description": "Verify that the Dashboard history table shows pagination controls and page 2 contains different reviews than page 1",
+      "planSteps": [
+        {
+          "type": "action",
+          "description": "Navigate to the Dashboard history page"
+        },
+        {
+          "type": "assertion",
+          "description": "The Reviews tab is active and a table of reviews is visible"
+        },
+        {
+          "type": "assertion",
+          "description": "The total review count label shows more than 10 reviews (e.g. '21 reviews' or similar number above 10)"
+        },
+        {
+          "type": "assertion",
+          "description": "Pagination controls are visible with left arrow ← and right arrow → buttons and numbered page buttons"
+        },
+        {
+          "type": "assertion",
+          "description": "Page 1 button appears active/highlighted (indigo background) indicating the current page"
+        },
+        {
+          "type": "action",
+          "description": "Click the page 2 button (or the → next arrow) to navigate to page 2"
+        },
+        {
+          "type": "assertion",
+          "description": "The table updates — different rows are now visible (page 2 content)"
+        },
+        {
+          "type": "assertion",
+          "description": "Page 2 button is now highlighted as the active page"
+        },
+        {
+          "type": "assertion",
+          "description": "The range indicator shows something like '11–20 of N' or '11–21 of N' confirming page 2 range"
+        },
+        {
+          "type": "action",
+          "description": "Click the ← previous arrow to go back to page 1"
+        },
+        {
+          "type": "assertion",
+          "description": "Page 1 is active again and the first page of reviews is displayed"
+        }
+      ]
+    }
+  ]
+}

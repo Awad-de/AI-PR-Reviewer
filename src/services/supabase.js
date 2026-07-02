@@ -91,6 +91,37 @@ export async function getReviewHistory() {
   return data || []
 }
 
+export async function getReviewHistoryPaged(page = 1, pageSize = 10) {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+  const { data, error, count } = await supabase
+    .from('reviews')
+    .select(REVIEW_FIELDS, { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to)
+
+  if (error) {
+    console.error('Failed to load review history page:', error.message)
+    return { data: [], count: 0 }
+  }
+
+  return { data: data || [], count: count || 0 }
+}
+
+export async function getTotalReviewCount() {
+  const { count, error } = await supabase
+    .from('reviews')
+    .select('id', { count: 'exact', head: true })
+  return error ? 0 : (count || 0)
+}
+
+export async function getTotalComparisonCount() {
+  const { count, error } = await supabase
+    .from('comparisons')
+    .select('id', { count: 'exact', head: true })
+  return error ? 0 : (count || 0)
+}
+
 /**
  * Fetches all reviews for a specific GitHub username.
  *

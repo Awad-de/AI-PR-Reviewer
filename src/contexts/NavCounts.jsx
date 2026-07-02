@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react'
-import { getReviewHistory, getComparisons } from '../services/supabase.js'
+import { getTotalReviewCount, getTotalComparisonCount } from '../services/supabase.js'
 
 const NavCountsContext = createContext(null)
 
@@ -9,11 +9,11 @@ export function NavCountsProvider({ children }) {
 
   const refresh = useCallback(async () => {
     const [reviews, comparisons] = await Promise.all([
-      getReviewHistory(),
-      getComparisons(),
+      getTotalReviewCount(),
+      getTotalComparisonCount(),
     ])
-    setReviewCount(reviews?.length ?? 0)
-    setComparisonCount(comparisons?.length ?? 0)
+    setReviewCount(reviews)
+    setComparisonCount(comparisons)
   }, [])
 
   useEffect(() => { refresh() }, [refresh])

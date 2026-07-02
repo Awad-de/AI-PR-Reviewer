@@ -123,13 +123,11 @@ function shortUrl(url) {
 
 function DashboardPage() {
   const navigate = useNavigate()
-  const [history, setHistory] = useState([])
   const [comparisons, setComparisons] = useState([])
   const [tab, setTab] = useState('reviews')
   const { reviewCount, comparisonCount } = useNavCounts()
 
   useEffect(() => {
-    getReviewHistory().then(setHistory)
     getComparisons().then(setComparisons)
   }, [])
 
@@ -165,7 +163,7 @@ function DashboardPage() {
 
         {tab === 'reviews' && (
           <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <Dashboard reviews={history} onSelectReview={() => {}} />
+            <Dashboard />
           </section>
         )}
 
