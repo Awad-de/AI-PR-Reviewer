@@ -637,6 +637,25 @@ Initial test hardcoded `"timer"` as the PR author of `vercel/next.js/pull/1`. Te
 
 ---
 
+## Iteration 20 — 3D Spatial Polish (ReviewCard Tilt + ScoreBar Puck)
+
+**Date:** 2026-07-02
+
+### Code Written
+- `package.json` — added `framer-motion` dependency
+- `src/index.css` — added `@layer utilities`: `.perspective-1000`, `.preserve-3d`, `.backface-hidden`
+- `src/components/ReviewCard.jsx` — wrapped card in `motion.div`; on mouse move calculates x/y offset from center → `rotateX`/`rotateY` (max ±10°) via Framer Motion spring (`stiffness: 300, damping: 30`); radial gradient shine overlay on hover (glassmorphism light sweep)
+- `src/components/ScoreBar.jsx` — circular score "puck": `inset` box-shadow for depth, outer colored glow per score range, `translateZ(20px)`, radial gradient highlight at top-left; `preserve-3d` + `backface-hidden` classes applied
+
+### TestSprite Results
+- Test ID: `4dcaffc0` — Run ID: `38538103`
+- Status: ✅ PASS — 21/21 steps
+- Verified: review detail page loads ✅, circular score puck visible ✅, review category cards present ✅, hover state works without breakage ✅, `preserve-3d` class confirmed in DOM ✅
+
+**Deployed:** commit `978dcaa` pushed to `main` → Vercel auto-deployed.
+
+---
+
 ## Final Summary
 
 | Iter | Feature / Fix | Test ID | Status |
@@ -660,7 +679,8 @@ Initial test hardcoded `"timer"` as the PR author of `vercel/next.js/pull/1`. Te
 | 17 | Coverage sweep — Dashboard AI filter + Comparisons tab + Save→redirect | `ccbb2cde` `a909c90e` `1f83af6e` | ✅ PASS 3/3 (filter ✅, tab 13/13 ✅, redirect ✅) |
 | 18 | Adversarial sweep — GitHub 404 error, comparison detail page, developer profile with data, StatsBar update | `7f4c06b9` `6f94dc29` `a2952756`→`d3020474` `f70678f9` | ✅ PASS 5/5 (404 ✅ 5/5, detail ✅ 15/15, dev-profile ✅ 7/7, StatsBar ✅); Test 3 redesigned after failure: "timer" → "impronunciable" (confirmed via GitHub API) |
 | 19 | Edge cases — empty DeveloperSearch, batch all-fail, compare one-side 404, confetti (score≥90), browser back | `a0d03579` `25d14703` `aaa68780` `71dcd133`→`66bf69f0` `794be16f` | ✅ PASS 6/6 (empty search ✅, batch-fail ✅, compare-fail ✅, confetti ✅ 9/9, back-nav ✅); confetti test redesigned: sindresorhus/is/pull/1 doesn't exist → used history review with score≥90 |
+| 20 | 3D Spatial Polish — ReviewCard perspective tilt + glassmorphism shine (Framer Motion), ScoreBar glow puck | `testsprite test create-batch` → run | — | — | ✅ PASS 21/21 |
 
-> **19 iterations · 15 user-facing features · 6 real bugs caught & fixed by TestSprite · 19 TestSprite runs · all passing**
+> **20 iterations · 16 user-facing features · 6 real bugs caught & fixed by TestSprite · 20 TestSprite runs · all passing**
 
 **App is production-ready. 🚀**

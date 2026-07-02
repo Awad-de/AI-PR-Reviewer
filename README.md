@@ -2,7 +2,7 @@
 
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://ai-pr-reviewer-snowy.vercel.app)
 [![CI](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml/badge.svg)](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml)
-[![TestSprite](https://img.shields.io/badge/TestSprite-19%20runs%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
+[![TestSprite](https://img.shields.io/badge/TestSprite-20%20runs%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://react.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
@@ -11,7 +11,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 🌐 **Live:** https://ai-pr-reviewer-snowy.vercel.app  
 📦 **Repo:** https://github.com/Awad-de/AI-PR-Reviewer  
 🧪 **TestSprite Dashboard:** https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c  
-📋 **Loop Log:** [LOOP.md](./LOOP.md) — 19 iterations · 15 features · 6 real bugs caught & fixed · 19 test runs · all passing
+📋 **Loop Log:** [LOOP.md](./LOOP.md) — 20 iterations · 16 features · 6 real bugs caught & fixed · 20 test runs · all passing
 
 ---
 
@@ -34,6 +34,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 | 13 | **Confetti + Excellence Banner** — pure-CSS confetti + gold banner when score ≥ 90 | `/` |
 | 14 | **Stats Bar** — animated count-up strip: Total Reviews · Avg Score · Approved · Changes Needed | `/` |
 | 15 | **Live Nav Badges** — History and Comparisons links show live counts, update instantly on add/delete | all pages |
+| 16 | **3D Micro-interactions** — Framer Motion perspective tilt + glassmorphism shine on review cards; glowing score puck | `/` |
 
 ---
 
@@ -219,6 +220,7 @@ src/
 | 17 | Dashboard filter + Comparisons tab + Save redirect | `ccbb2cde` `a909c90e` `1f83af6e` | ✅ 3/3 |
 | 18 | GitHub 404 error + comparison detail + dev profile + StatsBar | `7f4c06b9` `6f94dc29` `d3020474` `f70678f9` | ✅ 5/5 |
 | 19 | Empty search + batch-all-fail + compare-one-fail + confetti + browser back | `a0d03579` `25d14703` `aaa68780` `66bf69f0` `794be16f` | ✅ 6/6 |
+| 20 | 3D Micro-interactions — ReviewCard tilt, shine, ScoreBar puck | `4dcaffc0` | ✅ 21/21 |
 
 Full loop log: [`LOOP.md`](./LOOP.md)
 
