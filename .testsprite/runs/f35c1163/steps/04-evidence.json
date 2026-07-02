@@ -1,0 +1,8 @@
+[
+  {
+    "kind": "snapshot",
+    "stepIndex": 4,
+    "summary": "Step 4 'Type 'timer' into the 'GitHub username…' field in the navbar and press Enter to open the developer profile (or click 'View Profile' if available' passed.",
+    "path": "steps/04-snapshot.html"
+  }
+]

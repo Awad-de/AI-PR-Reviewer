@@ -1,0 +1,8 @@
+[
+  {
+    "kind": "snapshot",
+    "stepIndex": 5,
+    "summary": "Step 5 'Expected the most recent review score to be visible as a numeric value.' failed. Error: TEST FAILURE\n\nThe developer profile page for @timer did not display populated statistics or a Score History chart after review activity — empty-state placeholders are shown instead of real numbers or chart data points.\n\nObservations:\n- The profile header and avatar are visible, showing username '@timer'.\n- The stat cards show \"Total PRs Reviewed\" = 0 and other cards (Average Score, Approve Rate, Most Recent Review) display dashes (\"—\").\n- The Score History section contains the message: \"No data yet — analyze a PR by @timer to populate this chart.\" The page also shows: \"No reviews found for @timer\".",
+    "path": "steps/05-snapshot.html"
+  }
+]

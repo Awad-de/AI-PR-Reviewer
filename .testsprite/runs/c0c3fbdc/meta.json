@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "cli-v1",
+  "snapshotId": "snap_5f1d9bbe44c02dab",
+  "testId": "71dcd133-79de-4dd1-ae78-b95e2cc38b1a",
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "codeVersion": "v1",
+  "runIdIfAvailable": "c0c3fbdc-bae8-4efd-96c0-a8d1597f9672",
+  "targetUrl": "https://ai-pr-reviewer-snowy.vercel.app",
+  "failedStepIndex": 4,
+  "failureKind": null,
+  "capturedAt": "2026-07-02T00:23:49.978Z",
+  "fetchedAt": "2026-07-02T00:24:58.336Z"
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "kind": "snapshot",
+    "stepIndex": 3,
+    "summary": "Step 3 'Click the 'Analyze PR' button to attempt to run the review and wait for the results to appear' passed.",
+    "path": "steps/03-snapshot.html"
+  }
+]

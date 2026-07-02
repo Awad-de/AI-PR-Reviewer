@@ -1,0 +1,17 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter20 — 3D review cards have preserve-3d class and ScoreBar puck is visible",
+  "description": "After analyzing a PR and viewing the review report, the review category cards should have the preserve-3d CSS class applied for 3D tilt micro-interactions, and the ScoreBar should display a circular score puck with a visible numeric score.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "action", "description": "Click the first review row to open the review detail page at /review/:id" },
+    { "type": "assertion", "description": "Verify the review detail page loads with a full review report visible" },
+    { "type": "assertion", "description": "Verify the Quality Score section shows a circular score indicator displaying a numeric score value" },
+    { "type": "assertion", "description": "Verify at least one review category card (Bugs, Security, Performance, Clarity, or Positives) is visible on the page" },
+    { "type": "action", "description": "Hover the mouse cursor over one of the review category cards" },
+    { "type": "assertion", "description": "Verify the review category card has a hover state — the card remains visible and interactive without any visual breakage or layout shift" },
+    { "type": "assertion", "description": "Verify the DOM contains elements with the CSS class preserve-3d applied to the review cards section" }
+  ]
+}

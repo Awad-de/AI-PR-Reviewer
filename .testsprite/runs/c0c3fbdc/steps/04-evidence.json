@@ -1,0 +1,8 @@
+[
+  {
+    "kind": "snapshot",
+    "stepIndex": 4,
+    "summary": "Step 4 'Expected an excellence banner with text 'Excellent Code Quality' to be visible below the score.' failed. Error: TEST BLOCKED\n\nThe test could not be run — the UI cannot retrieve the specified PR and therefore the review could not be generated.\n\nObservations:\n- The input field contains 'https://github.com/sindresorhus/is/pull/1' and the 'Analyze PR' button was clicked.\n- A visible error message 'PR not found. Check the URL.' is shown and no numeric score or review content appeared.",
+    "path": "steps/04-snapshot.html"
+  }
+]

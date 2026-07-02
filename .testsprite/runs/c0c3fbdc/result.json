@@ -1,0 +1,18 @@
+{
+  "testId": "71dcd133-79de-4dd1-ae78-b95e2cc38b1a",
+  "status": "blocked",
+  "startedAt": "2026-07-02T00:20:35.876Z",
+  "finishedAt": "2026-07-02T00:23:49.978Z",
+  "videoUrl": "https://testsprite-videos.s3.us-east-1.amazonaws.com/54e89488-a0b1-7055-edff-9058ffcfb401/1782951829493048//tmp/3d4bc0b3-26c9-4d4a-bb78-931ed6cdee72/result.webm",
+  "failureAnalysisUrl": null,
+  "snapshotId": "snap_5f1d9bbe44c02dab",
+  "runIdIfAvailable": "c0c3fbdc-bae8-4efd-96c0-a8d1597f9672",
+  "codeVersion": "v1",
+  "targetUrl": "https://ai-pr-reviewer-snowy.vercel.app",
+  "targetUrlSource": "run",
+  "failedStepIndex": 4,
+  "failureKind": null,
+  "verdict": "blocked",
+  "executionStatus": "completed",
+  "summary": "Blocked before a verdict could be produced: TEST BLOCKED\n\nThe test could not be run — the UI cannot retrieve the specified PR and therefore the review could not be generated.\n\nObservations:\n- The input field contains 'https://github.com/sindresorhus/is/pull/1' and the 'Analyze PR' button was clicked.\n- A visible error message 'PR not found. Check the URL.' is shown and no numeric score or review content appeared."
+}
