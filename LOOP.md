@@ -719,17 +719,22 @@ Nav badges (`History 20`, `Comparisons 1`) were also wrong because `NavCounts` c
 
 ## CLI Improvement Bonus (testsprite-cli)
 
-During iterations **11** and **20**, the CLI hit `--timeout` while polling with `--wait`.  
-Recovery needed `testsprite test wait <runId>`, but in `--output json` mode a polling-deadline `TimeoutError` left stdout empty — agents could not recover the runId without parsing stderr.
+While dogfooding TestSprite across 21 iterations, three CLI friction patterns blocked agent recovery when `--wait` polling hit a deadline or a per-request timeout in `--output json` mode — stdout was empty and runIds had to be scraped from stderr.
 
-Submitted two upstream fixes to [TestSprite/testsprite-cli](https://github.com/TestSprite/testsprite-cli):
+Submitted three upstream fixes to [TestSprite/testsprite-cli](https://github.com/TestSprite/testsprite-cli):
 
-| PR | Commands fixed | Fix |
-|----|----------------|-----|
-| [#127](https://github.com/TestSprite/testsprite-cli/pull/127) | `test run --wait`, `test wait` | Emit `{ runId, status: "running" }` to stdout before exit 7 on TimeoutError |
-| [#134](https://github.com/TestSprite/testsprite-cli/pull/134) | `test rerun --wait` (single FE) | Same partial-stdout pattern for the remaining rerun path |
+| PR | Commands fixed | Problem | Fix |
+|----|----------------|---------|-----|
+| [#127](https://github.com/TestSprite/testsprite-cli/pull/127) | `test run --wait`, `test wait` | Polling-deadline `TimeoutError` → empty stdout | Emit `{ runId, status: "running" }` to stdout before exit 7 |
+| [#134](https://github.com/TestSprite/testsprite-cli/pull/134) | `test rerun --wait` (single FE) | Same asymmetry vs `RequestTimeoutError` path | Same partial-stdout pattern |
+| [#135](https://github.com/TestSprite/testsprite-cli/pull/135) | `test run --all --wait`, `test rerun --all --wait` | `RequestTimeoutError` in batch fan-out rejected before `out.print()` | Classify as `timeout` with runId so stdout lists every dispatched run |
 
-**Related LOOP friction:** iteration 11 (service timeout → manual `test wait`) · iteration 20 (CLI 600s timeout → `test wait` until terminal).
+**LOOP friction that motivated the fixes:**
+- **Iteration 11** — TestSprite service timeout → recovered with `testsprite test wait`
+- **Iteration 20** — CLI `--wait` timeout (600s) while run still executing → `testsprite test wait` until terminal
+- **Iterations 15–20** — heavy `create-batch` → run workflows where JSON agents need programmatic runId recovery
+
+All three PRs: exit 7 + parseable stdout so agents can chain into `testsprite test wait <runId>` without parsing stderr.
 
 ---
 
