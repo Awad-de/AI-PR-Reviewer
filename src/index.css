@@ -21,49 +21,6 @@
   .perspective-1000 { perspective: 1000px; }
   .preserve-3d { transform-style: preserve-3d; }
   .backface-hidden { backface-visibility: hidden; }
-
-  /* Card sheen — CSS-only light sweep on hover, no JS required */
-  .card-sheen {
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    pointer-events: none;
-    background: linear-gradient(
-      120deg,
-      rgba(255,255,255,0.06) 0%,
-      rgba(255,255,255,0.18) 50%,
-      rgba(255,255,255,0.06) 100%
-    );
-    transform: translateX(-100%) rotate(25deg);
-    transition: transform 700ms ease, opacity 300ms;
-    opacity: 0;
-  }
-  .card:hover .card-sheen {
-    transform: translateX(20%) rotate(25deg);
-    opacity: 1;
-  }
-
-  /* Score puck — layered depth circle, no inline transforms needed */
-  .score-puck {
-    border-radius: 9999px;
-    background: linear-gradient(180deg, #111827, #0f172a);
-    box-shadow:
-      inset 0 6px 18px rgba(255,255,255,0.03),
-      0 8px 24px rgba(2,6,23,0.6);
-    transform: translateZ(20px);
-    will-change: transform;
-  }
-}
-
-/* Respect user motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  .card,
-  .card * {
-    transition: none !important;
-    animation: none !important;
-  }
 }
 
 @layer base {
