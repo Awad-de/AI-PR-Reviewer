@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef } from 'react'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 const TYPE_CONFIG = {
   bugs: {
@@ -34,6 +34,9 @@ const TYPE_CONFIG = {
   },
 }
 
+const SPRING = { type: 'spring', stiffness: 300, damping: 30 }
+const MAX_TILT = 8
+
 /**
  * @param {{ title?: string, items: string[], type: string }} props
  */
@@ -43,46 +46,65 @@ export default function ReviewCard({ title, items, type }) {
   const isEmpty = !items || items.length === 0
 
   const ref = useRef(null)
-  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 })
-  const [shine, setShine] = useState({ x: 50, y: 50, opacity: 0 })
+  const rafRef = useRef(null)
+  const rotateX = useMotionValue(0)
+  const rotateY = useMotionValue(0)
+  const springX = useSpring(rotateX, SPRING)
+  const springY = useSpring(rotateY, SPRING)
 
-  function handleMouseMove(e) {
-    const rect = ref.current.getBoundingClientRect()
-    const cx = rect.left + rect.width / 2
-    const cy = rect.top + rect.height / 2
-    const dx = (e.clientX - cx) / (rect.width / 2)
-    const dy = (e.clientY - cy) / (rect.height / 2)
-    setTilt({ rotateX: -dy * 10, rotateY: dx * 10 })
-    setShine({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-      opacity: 0.12,
-    })
-  }
+  useEffect(() => {
+    // SSR / touch guard — no tilt on touch-primary devices
+    if (typeof window === 'undefined') return
+    if (navigator.maxTouchPoints > 0) return
+    // Respect prefers-reduced-motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-  function handleMouseLeave() {
-    setTilt({ rotateX: 0, rotateY: 0 })
-    setShine({ x: 50, y: 50, opacity: 0 })
-  }
+    const el = ref.current
+    if (!el) return
+
+    function onMove(e) {
+      if (rafRef.current) return
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null
+        if (!ref.current) return
+        const rect = ref.current.getBoundingClientRect()
+        const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1   // -1 → 1
+        const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1    // -1 → 1
+        const cx = Math.max(-1, Math.min(1, nx))
+        const cy = Math.max(-1, Math.min(1, ny))
+        rotateY.set(cx * MAX_TILT)
+        rotateX.set(-cy * MAX_TILT)
+      })
+    }
+
+    function onLeave() {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
+      rotateX.set(0)
+      rotateY.set(0)
+    }
+
+    el.addEventListener('mousemove', onMove)
+    el.addEventListener('mouseleave', onLeave)
+    return () => {
+      el.removeEventListener('mousemove', onMove)
+      el.removeEventListener('mouseleave', onLeave)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [rotateX, rotateY])
 
   return (
-    <div className="perspective-1000">
+    <div className="perspective-1000 review-card">
       <motion.div
         ref={ref}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        animate={{ rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className={`preserve-3d backface-hidden relative bg-gray-900 border border-gray-800 border-l-4 ${config.borderClass} rounded-lg p-4 cursor-default`}
-        style={{ transformStyle: 'preserve-3d' }}
+        data-tilt-enabled="true"
+        style={{ rotateX: springX, rotateY: springY }}
+        className={`card preserve-3d backface-hidden relative overflow-hidden bg-gray-900 border border-gray-800 border-l-4 ${config.borderClass} rounded-lg p-4 cursor-default`}
       >
-        {/* Glassmorphism shine sweep */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-lg transition-opacity duration-200"
-          style={{
-            background: `radial-gradient(circle at ${shine.x}% ${shine.y}%, rgba(255,255,255,${shine.opacity}) 0%, transparent 65%)`,
-          }}
-        />
+        {/* CSS-only sheen sweep on hover */}
+        <div className="card-sheen" aria-hidden="true" />
 
         <div className="flex items-center gap-2 mb-3">
           <span className="text-base">{config.icon}</span>
