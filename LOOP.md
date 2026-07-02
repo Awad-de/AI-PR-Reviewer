@@ -714,6 +714,6 @@ Nav badges (`History 20`, `Comparisons 1`) were also wrong because `NavCounts` c
 
 ---
 
-> **21 iterations · 17 user-facing features · 7 real bugs caught & fixed by TestSprite · 21 TestSprite runs · all passing**
+> **21 iterations · 17 user-facing features · 7 real bugs caught & fixed by TestSprite · 22 TestSprite runs · all passing**
 
 **App is production-ready. 🚀**

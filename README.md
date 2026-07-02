@@ -2,7 +2,7 @@
 
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://ai-pr-reviewer-snowy.vercel.app)
 [![CI](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml/badge.svg)](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml)
-[![TestSprite](https://img.shields.io/badge/TestSprite-21%20runs%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
+[![TestSprite](https://img.shields.io/badge/TestSprite-22%20runs%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://react.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
@@ -11,7 +11,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 🌐 **Live:** https://ai-pr-reviewer-snowy.vercel.app  
 📦 **Repo:** https://github.com/Awad-de/AI-PR-Reviewer  
 🧪 **TestSprite Dashboard:** https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c  
-📋 **Loop Log:** [LOOP.md](./LOOP.md) — 21 iterations · 17 features · 7 real bugs caught & fixed · 21 test runs · all passing
+📋 **Loop Log:** [LOOP.md](./LOOP.md) — 21 iterations · 17 features · 7 real bugs caught & fixed · 22 test runs · all passing
 
 ---
 
@@ -35,7 +35,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 | 14 | **Stats Bar** — animated count-up strip: Total Reviews · Avg Score · Approved · Changes Needed | `/` |
 | 15 | **Live Nav Badges** — History and Comparisons links show live counts, update instantly on add/delete | all pages |
 | 16 | **3D Micro-interactions** — Framer Motion perspective tilt + glassmorphism shine on review cards; glowing score puck | `/` |
-| 17 | **Dashboard Pagination** — numbered pages (10/page), ← → controls, range label; nav badges show true total count | `/dashboard` |
+| 17 | **Full Pagination** — numbered pages (10/page), ← → controls, range label for Reviews history AND Comparisons; nav badges show true DB total | `/dashboard` `/comparisons` |
 
 ---
 
@@ -52,7 +52,7 @@ Every feature was verified by a real TestSprite run against the live app before 
 - **Iterations 1–16** — features built one by one, each with a TestSprite run
 - **Iterations 17–18** — coverage sweeps and adversarial tests (error states, edge cases)
 - **Iteration 19–20** — edge case sweep + 3D spatial polish
-- **Iteration 21** — bug fix: dashboard history capped at 20, pagination added
+- **Iteration 21** — bug fix: Reviews + Comparisons both capped at 20; pagination added to all 3 list views, nav badge totals corrected
 
 **7 real bugs** were caught and fixed by the loop:
 
@@ -223,7 +223,7 @@ src/
 | 18 | GitHub 404 error + comparison detail + dev profile + StatsBar | `7f4c06b9` `6f94dc29` `d3020474` `f70678f9` | ✅ 5/5 |
 | 19 | Empty search + batch-all-fail + compare-one-fail + confetti + browser back | `a0d03579` `25d14703` `aaa68780` `66bf69f0` `794be16f` | ✅ 6/6 |
 | 20 | 3D Micro-interactions — ReviewCard tilt, shine, ScoreBar puck | `4dcaffc0` | ✅ 21/21 |
-| 21 | Dashboard pagination — page controls, range label, nav badge total | `d7f02dd5` | ✅ 14/14 |
+| 21 | Reviews pagination + Comparisons pagination — controls, range label, nav badge totals | `d7f02dd5` `2cfae3c6` | ✅ 14/14 + 11/11 |
 
 Full loop log: [`LOOP.md`](./LOOP.md)
 
