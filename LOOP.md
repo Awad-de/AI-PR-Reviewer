@@ -28,6 +28,8 @@ Repo: https://github.com/Awad-de/AI-PR-Reviewer
 | 16 | Nav badge counts on History + Comparisons (live update on add/delete) | `testsprite test create-batch` → run | Comparisons badge invisible when count=0 (`!count` treated 0 as falsy) | Changed to `count == null` check so badge shows "0" | ✅ PASS 2/2 (badges ✅ 13/13, badge increment ✅) |
 | 17 | Coverage sweep — Dashboard AI filter + Comparisons tab + Save→redirect | `testsprite test create-batch` → run | — | — | ✅ PASS 3/3 (filter ✅, tab ✅ 13/13, redirect ✅) |
 | 18 | Deep adversarial sweep — GitHub 404 error, comparison detail page, developer profile with data, StatsBar update | `testsprite test create-batch` → run | Test 3 FAILED: hardcoded username "timer" ≠ actual PR author — GitHub API confirmed author is "impronunciable" | Rewrote test with correct username | ✅ PASS 5/5 (404 error ✅, detail page ✅ 15/15, dev profile ✅ 7/7, StatsBar ✅) |
+| 19 | Edge case sweep — empty DeveloperSearch, batch all-fail, compare one-side 404, confetti score≥90, browser back | `testsprite test create-batch` → run | Confetti test BLOCKED: `sindresorhus/is/pull/1` doesn't exist | Redesigned test to find score≥90 review in History | ✅ PASS 6/6 (empty search ✅, batch-fail ✅, compare-fail ✅, confetti ✅ 9/9, back-nav ✅) |
+| 20 | 3D Spatial Polish — ReviewCard Framer Motion tilt + glassmorphism shine, ScoreBar glow puck | `testsprite test create-batch` → run | — | — | ✅ PASS 21/21 |
 
 ---
 
