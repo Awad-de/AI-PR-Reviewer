@@ -1,0 +1,15 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter19 — Batch review gracefully handles all PRs failing",
+  "description": "When all PR URLs submitted to batch review fail to load (non-existent repos), the app shows error indicators for each PR and a summary of 0 successful reviews — no crash, no blank screen.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /batch" },
+    { "type": "action", "description": "Paste these three URLs into the batch textarea, one per line: https://github.com/this-user-does-not-exist-xyz/fake-repo/pull/1 and https://github.com/another-fake-user-abc/private-repo/pull/99 and https://github.com/nonexistent-org-zyx/missing/pull/500" },
+    { "type": "action", "description": "Click the Analyze All button" },
+    { "type": "assertion", "description": "Verify a loading or progress indicator appears while the batch runs" },
+    { "type": "assertion", "description": "Verify after completion each PR row shows an error or failure indicator — not a successful review card" },
+    { "type": "assertion", "description": "Verify the app does not crash and the page remains interactive — the user can still navigate away" }
+  ]
+}
