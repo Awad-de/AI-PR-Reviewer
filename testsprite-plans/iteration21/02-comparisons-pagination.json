@@ -1,0 +1,35 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iteration 21 — Comparisons pagination shows entries beyond page 1",
+  "planSteps": [
+    {
+      "type": "action",
+      "description": "Navigate to the Comparisons page at /comparisons"
+    },
+    {
+      "type": "assertion",
+      "description": "The page loads and shows a table of saved comparisons with columns Old PR, New PR, Old score, New score, Delta"
+    },
+    {
+      "type": "assertion",
+      "description": "The total count label near the heading shows the real number of comparisons (e.g. '1 total' or any number)"
+    },
+    {
+      "type": "action",
+      "description": "Navigate to the Dashboard history page at /dashboard"
+    },
+    {
+      "type": "action",
+      "description": "Click the Comparisons tab button to switch to the Comparisons tab"
+    },
+    {
+      "type": "assertion",
+      "description": "The Comparisons tab content is now visible showing a table or an empty state message"
+    },
+    {
+      "type": "assertion",
+      "description": "The Comparisons tab does NOT show a hard-capped list — either it shows all entries or pagination controls are present if there are more than 10 comparisons"
+    }
+  ]
+}

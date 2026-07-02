@@ -30,7 +30,7 @@ Repo: https://github.com/Awad-de/AI-PR-Reviewer
 | 18 | Deep adversarial sweep — GitHub 404 error, comparison detail page, developer profile with data, StatsBar update | `testsprite test create-batch` → run | Test 3 FAILED: hardcoded username "timer" ≠ actual PR author — GitHub API confirmed author is "impronunciable" | Rewrote test with correct username | ✅ PASS 5/5 (404 error ✅, detail page ✅ 15/15, dev profile ✅ 7/7, StatsBar ✅) |
 | 19 | Edge case sweep — empty DeveloperSearch, batch all-fail, compare one-side 404, confetti score≥90, browser back | `testsprite test create-batch` → run | Confetti test BLOCKED: `sindresorhus/is/pull/1` doesn't exist | Redesigned test to find score≥90 review in History | ✅ PASS 6/6 (empty search ✅, batch-fail ✅, compare-fail ✅, confetti ✅ 9/9, back-nav ✅) |
 | 20 | 3D Spatial Polish — ReviewCard Framer Motion tilt + glassmorphism shine, ScoreBar glow puck | `testsprite test create-batch` → run | CLI timeout (600s) — run still executing on server | Polled with `testsprite test wait` until terminal verdict | ✅ PASS 21/21 |
-| 21 | 🐛 Bug fix — Dashboard history capped at 20 (older reviews invisible); nav badges showed wrong total count | `testsprite test create --plan-from` → run | — | — | ✅ PASS 14/14 |
+| 21 | 🐛 Bug fix — Dashboard + Comparisons capped at 20 (older entries invisible); nav badges wrong totals | `testsprite test create --plan-from` × 2 | — | — | ✅ PASS 14/14 + 11/11 |
 
 ---
 
@@ -683,7 +683,7 @@ Initial test hardcoded `"timer"` as the PR author of `vercel/next.js/pull/1`. Te
 | 18 | Adversarial sweep — GitHub 404 error, comparison detail page, developer profile with data, StatsBar update | `7f4c06b9` `6f94dc29` `a2952756`→`d3020474` `f70678f9` | ✅ PASS 5/5 (404 ✅ 5/5, detail ✅ 15/15, dev-profile ✅ 7/7, StatsBar ✅); Test 3 redesigned after failure: "timer" → "impronunciable" (confirmed via GitHub API) |
 | 19 | Edge cases — empty DeveloperSearch, batch all-fail, compare one-side 404, confetti (score≥90), browser back | `a0d03579` `25d14703` `aaa68780` `71dcd133`→`66bf69f0` `794be16f` | ✅ PASS 6/6 (empty search ✅, batch-fail ✅, compare-fail ✅, confetti ✅ 9/9, back-nav ✅); confetti test redesigned: sindresorhus/is/pull/1 doesn't exist → used history review with score≥90 |
 | 20 | 3D Spatial Polish — ReviewCard perspective tilt + glassmorphism shine (Framer Motion), ScoreBar glow puck | `testsprite test create-batch` → run | — | — | ✅ PASS 21/21 |
-| 21 | 🐛 Dashboard pagination — reviews beyond 20 now visible; nav badge total count fixed | `d7f02dd5` | ✅ PASS 14/14 |
+| 21 | 🐛 Dashboard + Comparisons pagination — all entries visible; nav badge totals fixed | `d7f02dd5` `2cfae3c6` | ✅ PASS 14/14 + 11/11 |
 
 ---
 
@@ -700,15 +700,17 @@ Nav badges (`History 20`, `Comparisons 1`) were also wrong because `NavCounts` c
 - `NavCounts.jsx` — counted `reviews.length` from the same capped array → badge max was 20
 
 ### Code Changed
-- `src/services/supabase.js` — added `getReviewHistoryPaged(page, pageSize)` using Supabase `.range(from, to)` with `{ count: 'exact' }` to return both a page of data and the true total; added `getTotalReviewCount()` and `getTotalComparisonCount()` lightweight HEAD-only count queries
+- `src/services/supabase.js` — added `getReviewHistoryPaged()` and `getComparisonsPaged()` using Supabase `.range(from, to)` with `{ count: 'exact' }`; added `getTotalReviewCount()` and `getTotalComparisonCount()` lightweight HEAD-only count queries
 - `src/components/Dashboard.jsx` — fully rewritten to self-fetch with pagination: internal `page` + `totalCount` state, `loadPage()` on mount and page-change, numbered page buttons with ellipsis, ← → arrows, `"X–Y of N"` range label, skeleton loader while fetching, opacity fade during page transitions
 - `src/contexts/NavCounts.jsx` — switched from `getReviewHistory().length` to `getTotalReviewCount()` → badges now always show the real database count
-- `src/App.jsx` `DashboardPage` — removed now-redundant local `history` state and `getReviewHistory()` call; `<Dashboard />` receives no props and manages its own data
+- `src/App.jsx` `DashboardPage` — removed now-redundant local `history` state; Comparisons tab now lazy-loads via `getComparisonsPaged()` with ← → page controls
+- `src/pages/ComparisonsPage.jsx` — fully rewritten to self-fetch with pagination: same 10/page controls, skeleton loader, opacity fade, delete refreshes current page
 
 ### TestSprite Results
-- Test ID: `d7f02dd5` — Run ID: `91cfe3e0`
-- Steps: **14/14 PASS**
-- Verified: `/dashboard` shows total > 10, pagination controls visible, page 2 loads different rows, page 2 button highlighted, range label correct, ← returns to page 1
+- **Test 1** — Test ID: `d7f02dd5` — Run ID: `91cfe3e0` — Steps: **14/14 PASS**
+  - Verified: `/dashboard` Reviews tab shows total > 10, pagination controls visible, page 2 loads different rows, page 2 button highlighted, range label correct, ← returns to page 1
+- **Test 2** — Test ID: `2cfae3c6` — Run ID: `c8a4ed34` — Steps: **11/11 PASS**
+  - Verified: `/comparisons` page loads with table and total count label; `/dashboard` Comparisons tab switches and shows entries without hard cap
 
 ---
 
