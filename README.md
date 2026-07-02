@@ -2,7 +2,7 @@
 
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://ai-pr-reviewer-snowy.vercel.app)
 [![CI](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml/badge.svg)](https://github.com/Awad-de/AI-PR-Reviewer/actions/workflows/testsprite.yml)
-[![TestSprite](https://img.shields.io/badge/TestSprite-16%20tests%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
+[![TestSprite](https://img.shields.io/badge/TestSprite-19%20runs%20passing-brightgreen)](https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c)
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://react.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
@@ -11,7 +11,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 🌐 **Live:** https://ai-pr-reviewer-snowy.vercel.app  
 📦 **Repo:** https://github.com/Awad-de/AI-PR-Reviewer  
 🧪 **TestSprite Dashboard:** https://www.testsprite.com/dashboard/tests/f9d9e262-e566-4933-9e27-fef1577eac6c  
-📋 **Loop Log:** [LOOP.md](./LOOP.md) — 16 iterations · 15 features · 1 bug fix · 16 test runs · all passing
+📋 **Loop Log:** [LOOP.md](./LOOP.md) — 19 iterations · 15 features · 6 real bugs caught & fixed · 19 test runs · all passing
 
 ---
 
@@ -33,7 +33,7 @@ An AI-powered GitHub Pull Request reviewer built with React, Vite, Tailwind CSS,
 | 12 | **Toast Notifications** — slide-in success / error / warning / info toasts (auto-dismiss 3s) | all pages |
 | 13 | **Confetti + Excellence Banner** — pure-CSS confetti + gold banner when score ≥ 90 | `/` |
 | 14 | **Stats Bar** — animated count-up strip: Total Reviews · Avg Score · Approved · Changes Needed | `/` |
-| 15 | **Live Nav Badges** — History and Comparisons nav links show live item counts, update instantly on add/delete | all pages |
+| 15 | **Live Nav Badges** — History and Comparisons links show live counts, update instantly on add/delete | all pages |
 
 ---
 
@@ -45,9 +45,24 @@ This project was built entirely through a **TestSprite verification loop**:
 Write code → Deploy to Vercel → testsprite test create → Analyze verdict → Fix → Re-run
 ```
 
-Every feature was verified by a real TestSprite run against the live app before moving on. Every bug caught by TestSprite was fixed and re-verified. The full log lives in [`LOOP.md`](./LOOP.md).
+Every feature was verified by a real TestSprite run against the live app before moving on. Every bug caught by TestSprite was fixed and re-verified. 19 iterations ran across 3 phases:
 
-**16 iterations. 15 features shipped. 1 bug fixed. 16 test runs. 0 skipped verifications.**
+- **Iterations 1–16** — features built one by one, each with a TestSprite run
+- **Iterations 17–18** — coverage sweeps and adversarial tests (error states, edge cases)
+- **Iteration 19** — deep edge case sweep: empty inputs, all-fail batch, partial comparison failure, confetti, browser back navigation
+
+**6 real bugs** were caught and fixed by the loop:
+
+| Iter | Bug caught by TestSprite | Fix |
+|------|--------------------------|-----|
+| 3 | Gemini model name 404 (deprecated) | Changed to `gemini-2.0-flash` |
+| 6 | Supabase constraint rejected AI verdict values | Added `normalizeVerdict()` |
+| 7 | Vercel 404 on `/review/:id` (SPA routing missing) | Added `vercel.json` rewrite |
+| 10 | Score History section hidden when no reviews → assertion failed | Made section always visible |
+| 14 | Deleted review row reappeared after confirm | Replaced broken `if` in render body with `useEffect` |
+| 16 | Comparisons badge invisible when count = 0 (`!count` falsy) | Changed to `count == null` check |
+
+Full log: [`LOOP.md`](./LOOP.md)
 
 ---
 
@@ -64,7 +79,7 @@ Every feature was verified by a real TestSprite run against the live app before 
 | Database | Supabase (PostgreSQL + RLS) |
 | Deployment | Vercel |
 | Testing | TestSprite CLI |
-| CI/CD | GitHub Actions |
+| CI/CD | GitHub Actions (gates on TestSprite) |
 
 ---
 
@@ -183,8 +198,8 @@ src/
 
 ## Test Coverage (TestSprite)
 
-| # | Feature | Test ID | Result |
-|---|---------|---------|--------|
+| Iter | What was tested | Key Test IDs | Result |
+|------|----------------|-------------|--------|
 | 1 | PR Input Validation | `210caabd` | ✅ 7/7 |
 | 2 | Dashboard + History | `053e8c00` | ✅ 6/6 |
 | 3 | Full AI Review Flow | `070d3dfa` | ✅ PASS |
@@ -194,13 +209,16 @@ src/
 | 7 | Shareable Review Page | `5ed09e9b` | ✅ 23/23 |
 | 8 | Batch Review | `24362a21` | ✅ 15/15 |
 | 9 | Auto-suggest Fix | `a2a0a890` | ✅ 7/7 |
-| 10 | Developer Profile Page | `85b034ca` | ✅ PASS |
+| 10 | Developer Profile Page | `85b034ca` `d3020474` | ✅ PASS |
 | 11 | PR Comparison | `0c29ae52` | ✅ 15/15 |
 | 12 | Unified Navbar + Comparisons | `42beb976` | ✅ 20/20 |
 | 13 | Delete + Detail + Share Link | `67475cd5` | ✅ 17/17 |
 | 14 | Delete Bug Fix | `8c4acdd4` | ✅ 7/7 |
-| 15 | Polish — Skeleton + Toast + Confetti + StatsBar | `163232ae` `52e098cf` `10f6b888` `acc0114b` | ✅ PASS 4/4 |
-| 16 | Live Nav Badges (History + Comparisons) | `b4cd720d` `6952c9fd` | ✅ 13/13 |
+| 15 | Polish — Skeleton + Toast + Confetti + StatsBar | `163232ae` `52e098cf` `10f6b888` `acc0114b` | ✅ 4/4 |
+| 16 | Live Nav Badges | `b4cd720d` `6952c9fd` | ✅ 13/13 |
+| 17 | Dashboard filter + Comparisons tab + Save redirect | `ccbb2cde` `a909c90e` `1f83af6e` | ✅ 3/3 |
+| 18 | GitHub 404 error + comparison detail + dev profile + StatsBar | `7f4c06b9` `6f94dc29` `d3020474` `f70678f9` | ✅ 5/5 |
+| 19 | Empty search + batch-all-fail + compare-one-fail + confetti + browser back | `a0d03579` `25d14703` `aaa68780` `66bf69f0` `794be16f` | ✅ 6/6 |
 
 Full loop log: [`LOOP.md`](./LOOP.md)
 
@@ -209,16 +227,17 @@ Full loop log: [`LOOP.md`](./LOOP.md)
 ## Try it
 
 ```
-# Single PR review (has security bugs → good for testing Auto-suggest)
+# Single PR review (has security bugs → triggers Auto-suggest Fixes)
 https://github.com/OWASP/NodeGoat/pull/300
 
 # Compare two PRs
-https://github.com/vercel/next.js/pull/95370  vs  https://github.com/vercel/next.js/pull/95371
+https://github.com/vercel/next.js/pull/1  vs  https://github.com/vercel/next.js/pull/2
 
-# Developer profile
-https://ai-pr-reviewer-snowy.vercel.app/developer/torvalds
+# Developer profile with real data
+https://ai-pr-reviewer-snowy.vercel.app/developer/impronunciable
 
-# Batch review (paste each on a new line)
+# Batch review — paste each URL on a new line at /batch
 https://github.com/OWASP/NodeGoat/pull/300
 https://github.com/vercel/next.js/pull/1
+https://github.com/vercel/next.js/pull/2
 ```
