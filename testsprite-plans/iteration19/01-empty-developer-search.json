@@ -1,0 +1,14 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter19 — DeveloperSearch with empty input does not crash",
+  "description": "When a user clicks the View Profile button in the Developer Search navbar widget without typing any username, the app should either show a validation message or remain on the same page — it must NOT navigate to a broken /developer/ URL or crash.",
+  "priority": "p0",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the home page" },
+    { "type": "assertion", "description": "Verify the Developer Search input field is visible in the navbar" },
+    { "type": "action", "description": "Click the View Profile button without typing anything in the Developer Search input" },
+    { "type": "assertion", "description": "Verify the app does NOT navigate to a broken URL like /developer/ with no username segment" },
+    { "type": "assertion", "description": "Verify no blank page or JavaScript error is shown — the page remains usable with visible content" }
+  ]
+}

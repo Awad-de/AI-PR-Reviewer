@@ -1,0 +1,15 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter19b — Confetti and excellence banner appear on review page with score >= 90",
+  "description": "Navigate to the History dashboard and look for any review with a score of 90 or above. Open that review's detail page at /review/:id and verify the gold Excellent Code Quality banner and confetti elements are visible. If no review with score >= 90 exists, analyze a new PR and check — but only assert confetti if the resulting score is 90 or above.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "assertion", "description": "Verify the reviews history table is visible with at least one row showing score numbers" },
+    { "type": "action", "description": "Look through the score column for any row showing a score of 90 or above and click that row to open the review detail page" },
+    { "type": "assertion", "description": "Verify the review detail page loads at /review/:id with the full review report visible" },
+    { "type": "assertion", "description": "Verify the score shown on the review page is 90 or above" },
+    { "type": "assertion", "description": "Verify a gold or yellow banner containing text like 'Excellent Code Quality' is visible on the review page" }
+  ]
+}

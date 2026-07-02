@@ -1,0 +1,15 @@
+{
+  "projectId": "f9d9e262-e566-4933-9e27-fef1577eac6c",
+  "type": "frontend",
+  "name": "Iter19 — Browser back button from review page returns to dashboard correctly",
+  "description": "After navigating from the dashboard to a review detail page at /review/:id, pressing the browser back button should return the user to /dashboard with the reviews table still visible — not a blank page or broken state.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to /dashboard" },
+    { "type": "assertion", "description": "Verify the reviews history table is visible with at least one row" },
+    { "type": "action", "description": "Click the share link icon on the first review row to navigate to /review/:id" },
+    { "type": "assertion", "description": "Verify the URL changes to /review/:id and the full review report is visible" },
+    { "type": "action", "description": "Click the browser back button to go back to the previous page" },
+    { "type": "assertion", "description": "Verify the URL returns to /dashboard and the reviews history table is visible again with the same rows — not a blank page" }
+  ]
+}
