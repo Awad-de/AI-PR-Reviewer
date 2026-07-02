@@ -714,6 +714,19 @@ Nav badges (`History 20`, `Comparisons 1`) were also wrong because `NavCounts` c
 
 ---
 
+---
+## CLI Improvement Bonus (testsprite-cli)
+During iterations 11 and 20, the CLI hit `--timeout` while polling with `--wait`.
+Recovery needed `testsprite test wait <runId>`, but in `--output json` mode a
+polling-deadline TimeoutError left stdout empty — agents could not recover the
+runId without parsing stderr.
+Submitted two upstream fixes to [TestSprite/testsprite-cli](https://github.com/TestSprite/testsprite-cli):
+| PR | Commands fixed | Fix |
+|----|----------------|-----|
+| [#127](https://github.com/TestSprite/testsprite-cli/pull/127) | `test run --wait`, `test wait` | Emit `{ runId, status: "running" }` to stdout before exit 7 on TimeoutError |
+| [#134](https://github.com/TestSprite/testsprite-cli/pull/134) | `test rerun --wait` (single FE) | Same partial-stdout pattern for the remaining rerun path |
+Related LOOP friction: iteration 11 (service timeout → manual `test wait`), iteration 20 (CLI 600s timeout → `test wait` until terminal).
+
 > **21 iterations · 17 user-facing features · 7 real bugs caught & fixed by TestSprite · 22 TestSprite runs · all passing**
 
 **App is production-ready. 🚀**
