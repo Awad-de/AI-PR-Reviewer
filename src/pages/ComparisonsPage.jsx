@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
-import { getComparisons, deleteComparison } from '../services/supabase.js'
+import { getComparisonsPaged, deleteComparison } from '../services/supabase.js'
 import { useNavCounts } from '../contexts/NavCounts.jsx'
+
+const PAGE_SIZE = 10
 
 function deltaColor(delta) {
   if (delta > 0) return 'text-green-400'
@@ -25,27 +27,84 @@ function formatDate(iso) {
   })
 }
 
+function Pagination({ page, totalPages, totalCount, loading, onPage }) {
+  if (totalPages <= 1) return null
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+  const visible = pages.filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+  const withEllipsis = []
+  visible.forEach((p, i) => {
+    if (i > 0 && p - visible[i - 1] > 1) withEllipsis.push('…')
+    withEllipsis.push(p)
+  })
+
+  return (
+    <div className="flex items-center justify-center gap-1 pt-4 pb-2">
+      <button
+        onClick={() => onPage(p => Math.max(1, p - 1))}
+        disabled={page === 1 || loading}
+        className="px-3 py-1.5 text-sm rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition"
+      >←</button>
+
+      {withEllipsis.map((p, i) =>
+        p === '…' ? (
+          <span key={`e${i}`} className="px-1 text-gray-600 text-sm">…</span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onPage(p)}
+            disabled={loading}
+            className={`w-8 h-8 text-sm rounded-lg font-medium transition ${
+              p === page
+                ? 'bg-indigo-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+            } disabled:cursor-not-allowed`}
+          >{p}</button>
+        )
+      )}
+
+      <button
+        onClick={() => onPage(p => Math.min(totalPages, p + 1))}
+        disabled={page === totalPages || loading}
+        className="px-3 py-1.5 text-sm rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition"
+      >→</button>
+
+      <span className="ml-2 text-xs text-gray-600">
+        {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} of {totalCount}
+      </span>
+    </div>
+  )
+}
+
 export default function ComparisonsPage() {
   const navigate = useNavigate()
   const [comparisons, setComparisons] = useState([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(null)
   const { refresh: refreshNavCounts } = useNavCounts()
 
-  useEffect(() => {
-    getComparisons().then((data) => {
-      setComparisons(data)
-      setLoading(false)
-    })
-  }, [])
+  async function loadPage(p) {
+    setLoading(true)
+    const { data, count } = await getComparisonsPaged(p, PAGE_SIZE)
+    setComparisons(data)
+    setTotalCount(count)
+    setLoading(false)
+  }
+
+  useEffect(() => { loadPage(page) }, [page])
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
   async function handleDelete(id) {
     if (!window.confirm('Delete this comparison?')) return
     setDeleting(id)
     try {
       await deleteComparison(id)
-      setComparisons((prev) => prev.filter((c) => c.id !== id))
       refreshNavCounts()
+      const newPage = comparisons.length === 1 && page > 1 ? page - 1 : page
+      setPage(newPage)
+      if (newPage === page) await loadPage(page)
     } catch (err) {
       alert(err.message)
     } finally {
@@ -59,7 +118,12 @@ export default function ComparisonsPage() {
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-white">Saved Comparisons</h1>
+          <h1 className="text-xl font-bold text-white">
+            Saved Comparisons
+            {totalCount > 0 && (
+              <span className="ml-2 text-sm font-normal text-gray-500">{totalCount} total</span>
+            )}
+          </h1>
           <button
             onClick={() => navigate('/compare')}
             className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition"
@@ -68,15 +132,13 @@ export default function ComparisonsPage() {
           </button>
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-24 text-gray-500">
-            <svg className="animate-spin h-7 w-7 text-indigo-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-            </svg>
-            Loading…
+        {loading && comparisons.length === 0 ? (
+          <div className="space-y-3 animate-pulse">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 bg-gray-800 rounded-lg" />
+            ))}
           </div>
-        ) : comparisons.length === 0 ? (
+        ) : totalCount === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-gray-600">
             <p className="text-5xl mb-4">⚖️</p>
             <p className="text-base">No comparisons saved yet</p>
@@ -90,55 +152,60 @@ export default function ComparisonsPage() {
           </div>
         ) : (
           <section className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
-                  <th className="px-5 py-3 text-left font-medium">Old PR</th>
-                  <th className="px-5 py-3 text-left font-medium">New PR</th>
-                  <th className="px-5 py-3 text-center font-medium text-red-400">Old</th>
-                  <th className="px-5 py-3 text-center font-medium text-green-400">New</th>
-                  <th className="px-5 py-3 text-center font-medium">Delta</th>
-                  <th className="px-5 py-3 text-left font-medium">Date</th>
-                  <th className="px-5 py-3 text-center font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                {comparisons.map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-800/40 transition">
-                    <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.old_pr_url)}</td>
-                    <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.new_pr_url)}</td>
-                    <td className="px-5 py-3 text-center font-bold text-red-400">{c.old_score}</td>
-                    <td className="px-5 py-3 text-center font-bold text-green-400">{c.new_score}</td>
-                    <td className="px-5 py-3 text-center">
-                      <span className={`font-semibold ${deltaColor(c.score_delta)}`}>
-                        {c.score_delta > 0 ? '+' : ''}{c.score_delta}
-                        {' '}{c.score_delta > 0 ? '↑' : c.score_delta < 0 ? '↓' : '—'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-gray-500 text-xs">{formatDate(c.created_at)}</td>
-                    <td className="px-5 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={() => navigate(`/comparisons/${c.id}`)}
-                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/40 transition"
-                          title="View details & share link"
-                        >
-                          🔗 View
-                        </button>
-                        <button
-                          onClick={() => handleDelete(c.id)}
-                          disabled={deleting === c.id}
-                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-red-900/20 text-red-400 hover:bg-red-900/40 disabled:opacity-40 transition"
-                          title="Delete comparison"
-                        >
-                          {deleting === c.id ? '…' : '🗑️'}
-                        </button>
-                      </div>
-                    </td>
+            <div className={`transition-opacity duration-150 ${loading ? 'opacity-40' : 'opacity-100'}`}>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+                    <th className="px-5 py-3 text-left font-medium">Old PR</th>
+                    <th className="px-5 py-3 text-left font-medium">New PR</th>
+                    <th className="px-5 py-3 text-center font-medium text-red-400">Old</th>
+                    <th className="px-5 py-3 text-center font-medium text-green-400">New</th>
+                    <th className="px-5 py-3 text-center font-medium">Delta</th>
+                    <th className="px-5 py-3 text-left font-medium">Date</th>
+                    <th className="px-5 py-3 text-center font-medium">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-800">
+                  {comparisons.map((c) => (
+                    <tr key={c.id} className="hover:bg-gray-800/40 transition cursor-pointer" onClick={() => navigate(`/comparisons/${c.id}`)}>
+                      <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.old_pr_url)}</td>
+                      <td className="px-5 py-3 text-gray-300 font-mono text-xs">{shortUrl(c.new_pr_url)}</td>
+                      <td className="px-5 py-3 text-center font-bold text-red-400">{c.old_score}</td>
+                      <td className="px-5 py-3 text-center font-bold text-green-400">{c.new_score}</td>
+                      <td className="px-5 py-3 text-center">
+                        <span className={`font-semibold ${deltaColor(c.score_delta)}`}>
+                          {c.score_delta > 0 ? '+' : ''}{c.score_delta}
+                          {' '}{c.score_delta > 0 ? '↑' : c.score_delta < 0 ? '↓' : '—'}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-gray-500 text-xs">{formatDate(c.created_at)}</td>
+                      <td className="px-5 py-3 text-center" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => navigate(`/comparisons/${c.id}`)}
+                            className="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/40 transition"
+                            title="View details & share link"
+                          >
+                            🔗 View
+                          </button>
+                          <button
+                            onClick={() => handleDelete(c.id)}
+                            disabled={deleting === c.id}
+                            className="px-2.5 py-1 rounded-md text-xs font-medium bg-red-900/20 text-red-400 hover:bg-red-900/40 disabled:opacity-40 transition"
+                            title="Delete comparison"
+                          >
+                            {deleting === c.id ? '…' : '🗑️'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-5 pb-2">
+              <Pagination page={page} totalPages={totalPages} totalCount={totalCount} loading={loading} onPage={setPage} />
+            </div>
           </section>
         )}
       </main>

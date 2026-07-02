@@ -108,6 +108,23 @@ export async function getReviewHistoryPaged(page = 1, pageSize = 10) {
   return { data: data || [], count: count || 0 }
 }
 
+export async function getComparisonsPaged(page = 1, pageSize = 10) {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+  const { data, error, count } = await supabase
+    .from('comparisons')
+    .select('id, created_at, old_pr_url, new_pr_url, old_score, new_score, score_delta, ai_provider', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to)
+
+  if (error) {
+    console.error('Failed to load comparisons page:', error.message)
+    return { data: [], count: 0 }
+  }
+
+  return { data: data || [], count: count || 0 }
+}
+
 export async function getTotalReviewCount() {
   const { count, error } = await supabase
     .from('reviews')
