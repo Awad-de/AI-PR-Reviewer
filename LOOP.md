@@ -723,18 +723,19 @@ While dogfooding TestSprite across 21 iterations, three CLI friction patterns bl
 
 Submitted three upstream fixes to [TestSprite/testsprite-cli](https://github.com/TestSprite/testsprite-cli):
 
-| PR | Commands fixed | Problem | Fix |
-|----|----------------|---------|-----|
-| [#127](https://github.com/TestSprite/testsprite-cli/pull/127) | `test run --wait`, `test wait` | Polling-deadline `TimeoutError` → empty stdout | Emit `{ runId, status: "running" }` to stdout before exit 7 |
-| [#134](https://github.com/TestSprite/testsprite-cli/pull/134) | `test rerun --wait` (single FE) | Same asymmetry vs `RequestTimeoutError` path | Same partial-stdout pattern |
-| [#135](https://github.com/TestSprite/testsprite-cli/pull/135) | `test run --all --wait`, `test rerun --all --wait` | `RequestTimeoutError` in batch fan-out rejected before `out.print()` | Classify as `timeout` with runId so stdout lists every dispatched run |
+| PR | Issue | Commands fixed | Problem | Fix |
+|----|-------|----------------|---------|-----|
+| [#153](https://github.com/TestSprite/testsprite-cli/pull/153) | [#156](https://github.com/TestSprite/testsprite-cli/issues/156) | `test run --wait`, `test wait` | Polling-deadline `TimeoutError` → empty stdout | Emit `{ runId, status: "running" }` to stdout before exit 7 |
+| [#155](https://github.com/TestSprite/testsprite-cli/pull/155) | [#157](https://github.com/TestSprite/testsprite-cli/issues/157) | `test rerun --wait` (single FE) | Same asymmetry vs `RequestTimeoutError` path | Same partial-stdout pattern |
+| [#154](https://github.com/TestSprite/testsprite-cli/pull/154) | [#158](https://github.com/TestSprite/testsprite-cli/issues/158) | `test run --all --wait`, `test rerun --all --wait` | `RequestTimeoutError` in batch fan-out rejected before `out.print()` | Classify as `timeout` with runId so stdout lists every dispatched run |
 
 **LOOP friction that motivated the fixes:**
 - **Iteration 11** — TestSprite service timeout → recovered with `testsprite test wait`
 - **Iteration 20** — CLI `--wait` timeout (600s) while run still executing → `testsprite test wait` until terminal
-- **Iterations 15–20** — heavy `create-batch` → run workflows where JSON agents need programmatic runId recovery
 
 All three PRs: exit 7 + parseable stdout so agents can chain into `testsprite test wait <runId>` without parsing stderr.
+
+*(Supersedes earlier draft PRs #127, #134, #135 — closed/superseded by clean PRs above.)*
 
 ---
 
