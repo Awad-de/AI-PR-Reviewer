@@ -2,7 +2,7 @@ const GEMINI_MODEL = 'gemini-1.5-flash'
 
 function buildEndpoint() {
   const key = import.meta.env.VITE_GEMINI_API_KEY
-  return `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent?key=${key}`
+  return `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`
 }
 
 function buildPrompt(prData) {
