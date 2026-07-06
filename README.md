@@ -232,6 +232,9 @@ Full loop log: [`LOOP.md`](./LOOP.md)
 ## Try it
 
 ```
+> [!IMPORTANT]
+> **API Limits Notice:** Use OpenAI (Default) for large Pull Requests. Gemini 2.0 Flash is on a free tier; if you hit a "Rate Limit" error, please switch to OpenAI or try a smaller PR (e.g., [Spoon-Knife/pull/3](https://github.com/octocat/Spoon-Knife/pull/3)).
+
 # Single PR review (has security bugs → triggers Auto-suggest Fixes)
 https://github.com/OWASP/NodeGoat/pull/300
 
