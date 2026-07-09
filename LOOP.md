@@ -726,7 +726,7 @@ Submitted three upstream fixes to [TestSprite/testsprite-cli](https://github.com
 | PR | Issue | Commands fixed | Problem | Fix |
 |----|-------|----------------|---------|-----|
 | [#153](https://github.com/TestSprite/testsprite-cli/pull/153) | [#156](https://github.com/TestSprite/testsprite-cli/issues/156) | `test run --wait`, `test wait` | Polling-deadline `TimeoutError` → empty stdout | Emit `{ runId, status: "running" }` to stdout before exit 7 |
-| [#155](https://github.com/TestSprite/testsprite-cli/pull/155) | [#157](https://github.com/TestSprite/testsprite-cli/issues/157) | `test rerun --wait` (single FE) | Same asymmetry vs `RequestTimeoutError` path | Same partial-stdout pattern |
+| [#219](https://github.com/TestSprite/testsprite-cli/pull/219) | [#157](https://github.com/TestSprite/testsprite-cli/issues/157) | `test rerun --wait` (single FE) | Same asymmetry vs `RequestTimeoutError` path | Same partial-stdout pattern |
 | [#154](https://github.com/TestSprite/testsprite-cli/pull/154) | [#158](https://github.com/TestSprite/testsprite-cli/issues/158) | `test run --all --wait`, `test rerun --all --wait` | `RequestTimeoutError` in batch fan-out rejected before `out.print()` | Classify as `timeout` with runId so stdout lists every dispatched run |
 
 **LOOP friction that motivated the fixes:**
